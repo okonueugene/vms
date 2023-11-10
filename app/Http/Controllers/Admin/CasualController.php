@@ -6,6 +6,7 @@ use DB;
 use Carbon\Carbon;
 use App\Models\Casual;
 use App\Models\Department;
+use App\Models\Designation;
 use Illuminate\Http\Request;
 use App\Imports\CasualsImport;
 use App\Http\Controllers\Controller;
@@ -54,20 +55,34 @@ class CasualController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|unique:casuals,name',
-        ]);
+        $rules = [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'email' => 'nullable|email|unique:casuals,email',
+            'phone' => 'required|unique:casuals,phone',
+            'designation_id' => 'required',
+            'gender' => 'required',
+            'official_identification_number' => 'required|unique:casuals,official_identification_number',
+        ];
+
+        $request->validate($rules);
+
 
         $data = $request->all();
+
+        $data['date_of_joining'] = Carbon::parse($request->date_of_joining)->format('Y-m-d');
         $data['created_by'] = auth()->user()->id;
-        $data['status'] = 1;
+        $data['gender'] = $request->gender == 5 ? 'male' : 'female';
+        $designation = Designation::where('id', $request->designation_id)->first();
+        $data['designation'] = $designation->name;
+
 
         $casual = Casual::create($data);
 
         if ($casual) {
             return redirect()->route('admin.casuals.index')->with('success', 'Casual created successfully');
         } else {
-            return redirect()->back()->with('error', 'Something went wrong');
+            return redirect()->back()->with('error', 'Failed to create the casual');
         }
     }
 

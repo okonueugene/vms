@@ -17,6 +17,7 @@ return new class () extends Migration {
             $table->string('first_name', 20);
             $table->string('last_name', 20);
             $table->string('phone');
+            $table->string('email')->nullable();
             $table->string('designation')->nullable();
             $table->enum('gender', ['male','female','other']);
             $table->string('official_identification_number', 255);
