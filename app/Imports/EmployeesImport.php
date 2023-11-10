@@ -68,8 +68,8 @@ class EmployeesImport implements ToModel, WithHeadingRow
 
         } elseif (is_numeric($row['date_of_joining'])) {
             // If the date is in an Excel serialized format
-            $date = Date::excelToDateTimeObject($row['date_of_joining']);
-            $formattedDate = Carbon::instance($date)->format('Y-m-d');
+            $formattedDate = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['date_of_joining'])->format('Y-m-d');
+
         } else {
             // If the date format isn't recognized, you need to decide how to handle this case
             $formattedDate = null; // Or set it to a default value or log an error
@@ -80,9 +80,8 @@ class EmployeesImport implements ToModel, WithHeadingRow
             'first_name' => 'required',
             'last_name' => 'required',
             'phone' => 'required|unique:employees,phone', // Add validation for unique phone
-            'gender' => 'required|in:male,female', // Add validation for valid gender values
+            'gender' => 'required', // Add validation for valid gender values
             'official_identification_number' => 'required', // Add validation if necessary
-            'date_of_joining' => 'required|date', // Add validation for valid date format
             'status' => 'required|in:Active,Inactive', // Add validation for valid status values
             'department' => 'required', // Add validation if necessary
             'designation' => 'required', // Add validation if necessary

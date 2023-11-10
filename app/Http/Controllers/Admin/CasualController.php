@@ -216,7 +216,6 @@ class CasualController extends Controller
     {
         if ($e instanceof \Illuminate\Validation\ValidationException) {
             $errorMessage = implode($e->validator->errors()->all());
-            dd($errorMessage);
         } elseif ($e instanceof \Illuminate\Database\QueryException) {
             $errorMessage = 'Database error during import.';
         } else {

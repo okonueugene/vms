@@ -49,8 +49,8 @@ class CasualsImport implements ToModel, WithHeadingRow
         $rules = [
             'first_name' => 'required',
             'last_name' => 'required',
-            'phone' => 'required|unique:employees,phone', // Add validation for unique phone
-            'gender' => 'required|in:male,female', // Add validation for valid gender values
+            'phone' => 'required|unique:casuals,phone', // Add validation for unique phone
+            'gender' => 'required', // Add validation for valid gender values
             'official_identification_number' => 'required', // Add validation if necessary
             'department' => 'required', // Add validation if necessary
             'designation' => 'required', // Add validation if necessary
