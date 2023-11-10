@@ -20,21 +20,20 @@ use Spatie\ImageOptimizer\OptimizerChainFactory;
 
 class VisitorService
 {
-
     public function all()
     {
         if (auth()->user()->getrole->name == 'Employee') {
-            return VisitingDetails::with('visitor','employee')->where(['employee_id' => auth()->user()->employee->id])->orderBy('id', 'desc')->get();
+            return VisitingDetails::with('visitor', 'employee')->where(['employee_id' => auth()->user()->employee->id])->orderBy('id', 'desc')->get();
         } else {
-            return VisitingDetails::with('visitor','employee')->orderBy('id', 'desc')->get();
+            return VisitingDetails::with('visitor', 'employee')->orderBy('id', 'desc')->get();
         }
     }
     public function take($number)
     {
         if (auth()->user()->getrole->name == 'Employee') {
-            return VisitingDetails::with('visitor','employee')->where(['employee_id' => auth()->user()->employee->id])->orderBy('id', 'desc')->take($number)->get();
+            return VisitingDetails::with('visitor', 'employee')->where(['employee_id' => auth()->user()->employee->id])->orderBy('id', 'desc')->take($number)->get();
         } else {
-            return VisitingDetails::with('visitor','employee')->orderBy('id', 'desc')->take($number)->get();
+            return VisitingDetails::with('visitor', 'employee')->orderBy('id', 'desc')->take($number)->get();
         }
     }
 
@@ -132,6 +131,8 @@ class VisitorService
             $visiting['reg_no'] = $reg_no;
             $visiting['purpose'] = $request->input('purpose');
             $visiting['company_name'] = $request->input('company_name');
+            $visiting['vehicle_registration_no'] = $request->input('vehicle_registration_no');
+            $visiting['belongings'] = $request->input('belongings');
             $visiting['employee_id'] = $request->input('employee_id');
             $visiting['visitor_id'] = $visitor->id;
             $visiting['status'] = VisitorStatus::PENDDING;
@@ -196,6 +197,8 @@ class VisitorService
         if ($visitingDetails) {
             $visiting['purpose'] = $request->input('purpose');
             $visiting['company_name'] = $request->input('company_name');
+            $visiting['vehicle_registration_no'] = $request->input('vehicle_registration_no');
+            $visiting['belongings'] = $request->input('belongings');
             $visiting['employee_id'] = $request->input('employee_id');
             $visiting['visitor_id'] = $visitingDetails->visitor->id;
             $visiting['status'] = Status::ACTIVE;
@@ -246,6 +249,8 @@ class VisitorService
         $visitor->phone = $request['phone'];
         $visitor->gender = $request['gender'];
         $visitor->address = $request['address'];
+        $visitor->national_identification_no = $request['national_identification_no'];
+        $visitor->belongings = $request['belongings'];
         $visitor->is_pre_register = false;
         $file_name = 'qrcode-' . preg_replace("/[^0-9]/", "", $request['phone']) . '.png';
         $visitor->barcode = $file_name;
@@ -255,6 +260,8 @@ class VisitorService
         if ($visitor) {
             $visiting['reg_no'] = $reg_no;
             $visiting['purpose'] = $request->input('purpose');
+            $visiting['vehicle_registration_no'] = $request->input('vehicle_registration_no');
+            $visiting['belongings'] = $request->input('belongings');
             $visiting['company_name'] = $request->input('company_name');
             $visiting['employee_id'] = $request->input('employee_id');
             $visiting['visitor_id'] = $visitor->id;

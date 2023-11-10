@@ -16,7 +16,6 @@ use App\Http\Requests\VisitorUpdateRequest;
 use App\Http\Services\Visitor\VisitorService;
 use App\Http\Resources\v1\SingleVisitorResource;
 
-
 class VisitorController extends Controller
 {
     use ApiResponse;
@@ -27,7 +26,7 @@ class VisitorController extends Controller
     public function __construct(VisitorService $visitorService)
     {
         $this->data['sitetitle'] = 'Visitors';
-        $this->middleware('auth:api')->except('checkin','checkinCheck', 'checkout', 'findVisitor');
+        $this->middleware('auth:api')->except('checkin', 'checkinCheck', 'checkout', 'findVisitor');
         $this->middleware(['permission:visitors'])->only('index');
         $this->middleware(['permission:visitors_create'])->only('create', 'store');
         $this->middleware(['permission:visitors_edit'])->only('edit', 'update');
@@ -82,6 +81,8 @@ class VisitorController extends Controller
             $visitor['company_name']               = blank($visitingDetails->company_name) ? "" : $visitingDetails->company_name;
             $visitor['national_identification_no'] = $visitingDetails->visitor->national_identification_no;
             $visitor['address']                    = blank($visitingDetails->visitor->address) ? "" : $visitingDetails->visitor->address;
+            $visitor['vehicle_registration_no']    = blank($visitingDetails->vehicle_registration_no) ? "" : $visitingDetails->vehicle_registration_no;
+            $visitor['belongings']                 = blank($visitingDetails->belongings) ? "" : $visitingDetails->belongings;
             $visitor['employee']                   = $visitingDetails->employee->name;
             $visitor['purpose']                    = $visitingDetails->purpose;
             $visitor['date']                         = blank($visitingDetails->created_at) ? "" : date('Y-m-d', strtotime($visitingDetails->created_at));
@@ -221,7 +222,7 @@ class VisitorController extends Controller
         $validator = Validator::make($request->all(), $validator->rules());
 
         if (!$validator->fails()) {
-                return $this->successResponse(['status' => 200, 'message' => 'true', 'visitor' => (object)[]]);
+            return $this->successResponse(['status' => 200, 'message' => 'true', 'visitor' => (object)[]]);
         } else {
             return $this->errorResponse(['status' => 422, 'message' => $validator->errors(), 'visitor' => (object)[]]);
         }

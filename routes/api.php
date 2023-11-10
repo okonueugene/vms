@@ -58,7 +58,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('visitor/check-out/{id}', [VisitorController::class, 'checkout']);
     Route::post('visitor/check-in', [VisitorController::class, 'checkin']);
     Route::post('visitor/check-in/validator', [VisitorController::class, 'checkinCheck']);
-    Route::get('visitor/change-status/{id}/{status}',  [VisitorController::class, 'changeStatus']);
+    Route::get('visitor/change-status/{id}/{status}', [VisitorController::class, 'changeStatus']);
     Route::post('visitor/find_visitor/', [VisitorController::class, 'findVisitor']); //done
 
     Route::get('settings/', [SettingController::class, 'index']);

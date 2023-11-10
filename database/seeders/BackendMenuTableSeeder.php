@@ -61,14 +61,7 @@ class BackendMenuTableSeeder extends Seeder
                 'priority'  => 8600,
                 'status'    => 1,
             ],
-            [
-                'name'      => 'casuals',
-                'link'      => 'casuals',
-                'icon'      => 'fas fa-user-secret',
-                'parent_id' => 0,
-                'priority'  => 8600,
-                'status'    => 1,
-            ],
+
             [
                 'name'      => 'visitors',
                 'link'      => 'visitors',
@@ -172,6 +165,15 @@ class BackendMenuTableSeeder extends Seeder
                 'icon'      => 'fa fa-crosshairs',
                 'parent_id' => $parent['administrators'],
                 'priority'  => 3000,
+                'status'    => 1,
+            ],
+            [
+
+                'name'      => 'casuals',
+                'link'      => 'casuals',
+                'icon'      => 'fas fa-user-tie',
+                'parent_id' => 0,
+                'priority'  => 8500,
                 'status'    => 1,
             ]
 

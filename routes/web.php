@@ -77,12 +77,20 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'installed', 'backen
     Route::get('employees/get-visitors/{id}', [EmployeeController::class, 'getVisitor'])->name('employees.get-visitors');
     Route::put('employees/check/{id}', [EmployeeController::class, 'checkEmployee'])->name('employees.check');
 
+    //import export
+    Route::post('employees/import', [EmployeeController::class, 'importEmployees'])->name('employees.import');
+    Route::get('employees/export', [EmployeeController::class, 'exportEmployees'])->name('employees.export');
+
     //casuals route
-    Route::resource('casuals', CasualController::class);
-    Route::get('get-casuals', [CasualController::class, 'getCasuals'])->name('casuals.get-casuals');
-    Route::get('casuals/get-pre-registers/{id}', [CasualController::class, 'getPreRegister'])->name('casuals.get-pre-registers');
-    Route::get('casuals/get-visitors/{id}', [CasualController::class, 'getVisitor'])->name('casuals.get-visitors');
-    Route::put('casuals/check/{id}', [CasualController::class, 'checkCasual'])->name('casuals.check');
+    Route::get('casuals', [CasualController::class, 'index'])->name('casuals.index');
+    Route::get('casuals/create', [CasualController::class, 'create'])->name('casuals.create');
+    Route::post('casuals/store', [CasualController::class, 'store'])->name('casuals.store');
+    Route::get('casuals/edit/{id}', [CasualController::class, 'edit'])->name('casuals.edit');
+    Route::put('casuals/update/{id}', [CasualController::class, 'update'])->name('casuals.update');
+    Route::delete('casuals/destroy/{id}', [CasualController::class, 'destroy'])->name('casuals.destroy');
+    //casuals import export
+    Route::post('casuals/import', [CasualController::class, 'importCasuals'])->name('casuals.import');
+    Route::get('casuals/export', [CasualController::class, 'exportCasuals'])->name('casuals.export');
 
     //pre-registers
     Route::resource('pre-registers', PreRegisterController::class);

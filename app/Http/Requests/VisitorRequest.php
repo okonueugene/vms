@@ -8,9 +8,8 @@ use Illuminate\Validation\Rule;
 
 class VisitorRequest extends FormRequest
 {
-
     private $visitor_id;
-    public  function __construct($id = null)
+    public function __construct($id = null)
     {
         parent::__construct();
         $this->visitor_id = $id ? $id : 0;
@@ -40,9 +39,9 @@ class VisitorRequest extends FormRequest
             $phone    = $uniquePhone;
             $national_identification_no    = $uniqueNID;
         }
-        if(setting('photo_capture_enable')){
+        if(setting('photo_capture_enable')) {
             $image = 'required|image|mimes:jpeg,png,jpg|max:5098';
-        }else{
+        } else {
             $image = 'image|mimes:jpeg,png,jpg|max:5098';
         }
         return [
@@ -57,6 +56,8 @@ class VisitorRequest extends FormRequest
             'purpose'                   => 'required|max:191',
             'address'                   => 'nullable|max:191',
             'image'                     => $image,
+            'vehicle_registration_no'   => 'nullable|max:191',
+            'belongings'                => 'nullable|max:191',
         ];
     }
 
