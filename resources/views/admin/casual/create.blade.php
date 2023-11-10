@@ -10,15 +10,15 @@
 @section('main-content')
     <section class="section">
         <div class="section-header">
-            <h1>{{ __('employee.employees') }}</h1>
-            {{ Breadcrumbs::render('employees/add') }}
+            <h1>Casuals</h1>
+            {{ Breadcrumbs::render('casuals/add') }}
         </div>
 
         <div class="section-body">
             <div class="row">
                 <div class="col-12 col-md-12 col-lg-12">
                     <div class="card">
-                        <form action="{{ route('admin.employees.store') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('admin.casuals.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="card-body">
                                 <div class="form-row">
@@ -75,11 +75,15 @@
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col">
-                                        <label>{{ __('employee.joining_date') }}</label> <span class="text-danger">*</span>
-                                        <input type="text" autocomplete="off" id="date-picker" name="date_of_joining"
-                                            class="form-control @error('date_of_joining') is-invalid @enderror"
-                                            value="{{ old('date_of_joining') }}">
-                                        @error('date_of_joining')
+                                        <label>{{ __('levels.status') }}</label> <span class="text-danger">*</span>
+                                        <select name="status" class="form-control @error('status') is-invalid @enderror">
+                                            @foreach (trans('statuses') as $key => $status)
+                                                <option value="{{ $key }}"
+                                                    {{ old('status') == $key ? 'selected' : '' }}>
+                                                    {{ $status }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('status')
                                             <div class="invalid-feedback">
                                                 {{ $message }}
                                             </div>
@@ -140,7 +144,7 @@
                                         @enderror
                                     </div>
                                 </div>
-
+                                {{-- 
                                 <div class="form-row">
                                     <div class="form-group col">
                                         <label>{{ __('employee.password') }}</label> <span class="text-danger">*</span>
@@ -180,7 +184,7 @@
                                             </div>
                                         @enderror
                                     </div>
-                                </div>
+                                </div> --}}
 
                                 <div class="form-row">
                                     <div class="form-group col">

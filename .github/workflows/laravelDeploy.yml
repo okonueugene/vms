@@ -14,7 +14,7 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.0'
+          php-version: "8.0"
       - name: Set directory permissions
         run: chmod -R 777 storage bootstrap/cache
       - name: Deploy to FTP
@@ -28,8 +28,6 @@ jobs:
         run: composer update
       - name: Install Dependencies
         run: composer install
-      - name: Generate key
-        run: php artisan key:generate
       - name: Clear cache
         run: php artisan optimize:clear && composer dump-autoload
       - name: Storage link

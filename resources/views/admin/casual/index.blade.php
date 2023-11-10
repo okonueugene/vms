@@ -131,18 +131,12 @@
 
 {{-- lets receive error message from controller --}}
 <script>
-    @if ($errors->any())
-
-        // Loop through each error message and display it using IziToast
-        @foreach ($errors->all() as $error)
-            iziToast.error({
-                title: "Error",
-                message: "Please check your form again and fill in all the required fields!",
-                position: "topRight",
-                timeout: 10000,
-                transitionIn: "fadeInDown"
-            });
-        @endforeach
+    @if (Session::has('error'))
+        iziToast.error({
+            title: 'Error',
+            message: '{{ Session::get('error') }}',
+            position: 'topRight'
+        });
     @endif
 </script>
 <script>

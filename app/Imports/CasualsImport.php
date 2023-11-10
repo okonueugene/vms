@@ -4,10 +4,12 @@ namespace App\Imports;
 
 use Carbon\Carbon;
 use App\Models\Casual;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Validator;
 use Maatwebsite\Excel\Concerns\ToModel;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class CasualsImport implements ToModel, WithHeadingRow
 {
@@ -43,6 +45,24 @@ class CasualsImport implements ToModel, WithHeadingRow
             $formattedDate = null; // Or set it to a default value or log an error
         }
 
+        //validation rules
+        $rules = [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'phone' => 'required|unique:employees,phone', // Add validation for unique phone
+            'gender' => 'required|in:male,female', // Add validation for valid gender values
+            'official_identification_number' => 'required', // Add validation if necessary
+            'department' => 'required', // Add validation if necessary
+            'designation' => 'required', // Add validation if necessary
+            'about' => 'nullable', // Add validation if necessary
+        ];
+
+        $request = new Request($row);
+        $validator = \Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
         return new Casual([
             'first_name' => $row['first_name'] ?? null,
             'last_name' => $row['last_name'] ?? null,
@@ -50,7 +70,7 @@ class CasualsImport implements ToModel, WithHeadingRow
             'designation' => $row['designation'] ?? null,
             'gender' => $row['gender'] ?? null,
             'official_identification_number' => $row['official_identification_number'] ?? null,
-            'date_of_joining' => $formattedDate,
+            'date_of_joining' => $formattedDate ?? null,
             'status' => $row['status'] ?? null,
             'about' => $row['about'] ?? null,
 
