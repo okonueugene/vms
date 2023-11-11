@@ -108,16 +108,22 @@ class CasualController extends Controller
             return redirect()->back()->with('error', 'Casual not found');
         }
 
-        $data = $request->all();
-        $data['updated_by'] = auth()->user()->id;
+        $data ['first_name'] = $request->first_name;
+        $data ['last_name'] = $request->last_name;
+        $data ['email'] = $request->email;
+        $data ['phone'] = $request->phone;
+        $data ['official_identification_number'] = $request->official_identification_number;
+        $data ['designation'] = $request->designation;
+        $data ['status'] = $request->status;
+        $data ['about'] = $request->about;
+        $data ['updated_by'] = auth()->user()->id;
 
-        $updateResult = $casual->update($data);
+        $casual->update($data);
 
-        if ($updateResult) {
-            return redirect()->route('admin.casuals.index')->with('success', 'Casual updated successfully');
-        } else {
-            return redirect()->back()->with('error', 'Failed to update the casual');
-        }
+        return redirect()->route('admin.casuals.index')->with('success', 'Casual updated successfully');
+
+
+
     }
 
 
