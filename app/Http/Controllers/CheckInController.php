@@ -32,9 +32,7 @@ class CheckInController extends Controller
 {
     public $disable;
 
-    function __construct()
-    {
-    }
+    public function __construct() {}
 
     public function index()
     {
@@ -285,6 +283,8 @@ class CheckInController extends Controller
             $visiting['purpose'] = $getVisitor['purpose'];
             $visiting['company_name'] = $getVisitor['company_name'];
             $visiting['employee_id'] = $getVisitor['employee_id'];
+            $visiting['belongings'] = $getVisitor['belongings'];
+            $visiting['vehicle_registration_no'] = $getVisitor['vehicle_registration_no'];
             $visiting['visitor_id'] = $visitor->id;
             $visiting['status'] = VisitorStatus::PENDDING;
             $visiting['user_id'] = $getVisitor['employee_id'];

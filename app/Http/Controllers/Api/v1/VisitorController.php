@@ -245,8 +245,11 @@ class VisitorController extends Controller
                 $visitor['name'] = $visitingDetails->visitor->name;
                 $visitor['phone'] = $visitingDetails->visitor->phone;
                 $visitor['reg_no'] = $visitingDetails->reg_no;
+                $visitor['belongings'] = $visitingDetails->belongings;
+                $visitor['purpose'] = $visitingDetails->purpose;
+                $visitor['vehicle_registration_no'] = $visitingDetails->vehicle_registration_no;
                 $visitor['image'] = $visitingDetails->images;
-                $visitor['employee'] = $visitingDetails->employee->name;
+                $visitor['employee'] = $visitingDetails->employee->first_name;
                 $visitor['site_name'] = setting('site_name');
                 $visitor['site_email'] = setting('site_email');
                 $visitor['site_address'] = setting('site_address');
