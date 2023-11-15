@@ -30,14 +30,26 @@ class CasualController extends Controller
         $this->middleware(['permission:casuals_delete'])->only('destroy');
     }
 
-    public function index()
+    public function index(Request $request)
     {
+        $perPage = 8;
+        $search = $request->input('search');
 
-        //pagination
-        $casuals = Casual::orderBy('id', 'DESC')->paginate(10);
+        $query = Casual::with('casualAttendance')->orderBy('id', 'desc');
 
-        return view('admin.casual.index', compact('casuals'));
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', '%' . $search . '%')
+                    ->orWhere('last_name', 'like', '%' . $search . '%');
+            });
+        }
+
+        $casuals = $query->paginate($perPage);
+
+        return view('admin.casual.index', compact('casuals', 'search'));
     }
+
+
 
     public function create()
     {
@@ -136,41 +148,6 @@ class CasualController extends Controller
     }
 
 
-
-    public function importEmployees(Request $request)
-    {
-
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv'
-        ]);
-
-        try {
-            Excel::import(new EmployeesImport(), $request->file('file'));
-
-            return redirect()->back()->with('success', 'Employees imported successfully.');
-        } catch (ValidationException $e) {
-            // Handle validation exception
-            $errorMessage = implode('<br>', $e->validator->errors()->all());
-            return redirect()->back()->with('error', $errorMessage);
-        } catch (QueryException $e) {
-            // Handle specific database exception (Integrity constraint violation)
-            if (strpos($e->getMessage(), 'Duplicate entry') !== false) {
-                $errorMessage = 'Duplicate entry found. Please check your file for duplicate records.';
-
-            } else {
-                // Handle other database exceptions if needed
-                $errorMessage = 'Database error during import.';
-
-            }
-
-            return redirect()->back()->with('error', $errorMessage);
-        } catch (\Exception $e) {
-            // Handle other generic exceptions
-            $errorMessage = $this->getErrorMessage($e);
-
-            return redirect()->back()->with('error', $errorMessage);
-        }
-    }
 
 
 

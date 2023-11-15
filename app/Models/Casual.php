@@ -25,4 +25,11 @@ class Casual extends Model
 
     //protected table
     protected $table = 'casuals';
+
+
+    public function casualAttendance()
+    {
+        return $this->hasMany(CasualAttendance::class);
+    }
+
 }

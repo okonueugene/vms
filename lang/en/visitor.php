@@ -1,6 +1,6 @@
 <?php
 
-return array (
+return array(
   'visitors' => 'Visitors',
   'add_visitor' => 'Add Visitor',
   'visitor_id' => 'VisitorID',
@@ -28,4 +28,6 @@ return array (
   'email' => 'E-mail',
   'date' => 'Date',
   'checkout' => 'Checkout',
+  'belongings' => 'Belongings',
+  'vehicle_reg' => 'Vehicle Registration Number',
 );

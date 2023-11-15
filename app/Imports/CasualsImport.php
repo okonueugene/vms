@@ -51,7 +51,7 @@ class CasualsImport implements ToModel, WithHeadingRow
             'last_name' => 'required',
             'phone' => 'required', // Add validation for unique phone
             'gender' => 'required', // Add validation for valid gender values
-            'official_identification_number' => 'required|unique:casuals,official_identification_number',
+            'official_identification_number' => 'required',
             'department' => 'required', // Add validation if necessary
             'designation' => 'required', // Add validation if necessary
             'about' => 'nullable', // Add validation if necessary
@@ -63,16 +63,31 @@ class CasualsImport implements ToModel, WithHeadingRow
         if ($validator->fails()) {
             throw new ValidationException($validator);
         }
-        return new Casual([
+        // return new Casual([
+        //     'first_name' => $row['first_name'] ?? null,
+        //     'last_name' => $row['last_name'] ?? null,
+        //     'phone' => $row['phone'] ?? null,
+        //     'designation' => $row['designation'] ?? null,
+        //     'gender' => $row['gender'] ?? null,
+        //     'official_identification_number' => $row['official_identification_number'] ?? null,
+        //     'date_of_joining' => $formattedDate ?? null,
+        //     'status' => $row['status'] ?? null,
+        //     'about' => $row['about'] ?? null,
+
+        // ]);
+
+        //insert or update data base on official_identification_number
+
+        return Casual::updateOrCreate([
             'first_name' => $row['first_name'] ?? null,
-            'last_name' => $row['last_name'] ?? null,
-            'phone' => $row['phone'] ?? null,
-            'designation' => $row['designation'] ?? null,
-            'gender' => $row['gender'] ?? null,
-            'official_identification_number' => $row['official_identification_number'] ?? null,
-            'date_of_joining' => $formattedDate ?? null,
-            'status' => $row['status'] ?? null,
-            'about' => $row['about'] ?? null,
+                'last_name' => $row['last_name'] ?? null,
+                'phone' => $row['phone'] ?? null,
+                'designation' => $row['designation'] ?? null,
+                'gender' => $row['gender'] ?? null,
+                'official_identification_number' => $row['official_identification_number'] ?? null,
+                'date_of_joining' => $formattedDate ?? null,
+                'status' => $row['status'] ?? null,
+                'about' => $row['about'] ?? null,
 
         ]);
     }

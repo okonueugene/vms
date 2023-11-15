@@ -67,9 +67,24 @@ class Handler extends ExceptionHandler
         if ($request->is('admin/*')) {
             return parent::render($request, $exception);
         }
-        if($exception instanceof \Illuminate\Auth\AuthenticationException ){
+        if($exception instanceof \Illuminate\Auth\AuthenticationException) {
             return response(['status' => 401, 'message' => 'Unauthorized'], 401);
         }
+        if ($exception instanceof TokenMismatchException) {
+            return redirect()->route('login')->withErrors(['message' => 'CSRF token mismatch. Please log in again.']);
+        }
+        if ($exception instanceof NotFoundHttpException) {
+            return back()->withErrors([
+                'delayMessage' => 'Page not found. Redirecting in 3 seconds...', // Your delay message
+                'delaySeconds' => 3, // Delay in seconds
+            ]);
+        }
+        if ($exception instanceof \Spatie\Permission\Exceptions\UnauthorizedException) {
+            $this->renderable(function (\Spatie\Permission\Exceptions\UnauthorizedException $e, $request) {
+                return redirect()->route('login')->withErrors(['message' => 'You are not authorized to access this page.']);
+            });
+        }
+
         return parent::render($request, $exception);
     }
 }

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\v1\Auth\MeController;
+use App\Http\Controllers\Api\v1\CasualsController;
 use App\Http\Controllers\Api\v1\SettingController;
 use App\Http\Controllers\Api\v1\VisitorController;
 use App\Http\Controllers\Api\v1\EmployeeController;
@@ -31,6 +32,8 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('employee', [EmployeeController::class, 'index']); //done
     Route::get('employee/{id}/show', [EmployeeController::class, 'show']); //done
 
+    //Casuals
+    Route::get('casual', [CasualsController::class, 'updateClockStatus']); //done
 
     //Pre-Register
     Route::get('preregister/', [PreRegisterController::class, 'index']); //done
