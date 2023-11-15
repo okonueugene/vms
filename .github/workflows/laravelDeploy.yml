@@ -27,7 +27,5 @@ jobs:
 
       - name: Update Dependencies
         run: composer update
-      - name: Install Dependencies
-        run: composer install
       - name: Clear cache
         run: php artisan optimize:clear && composer dump-autoload

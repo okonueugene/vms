@@ -42,7 +42,6 @@
 
                             </div>
                         @endcan
-                        <div id="calendar"></div>
 
                         <div class="card-body">
                             <div class="table-responsive">
@@ -85,8 +84,8 @@
                                                         <a href="{{ route('admin.casuals.edit', $casual->id) }}"
                                                             class="btn btn-icon btn-primary"><i class="far fa-edit"></i></a>
                                                         <a href="javascript:void(0)" class="btn btn-icon btn-info"
-                                                            onclick="viewCasual({{ $casual->casualAttendance }})">
-                                                            <i class="fas fa-eye"></i>
+                                                            onclick="viewCasual({{ $casual }}) "> <i
+                                                                class="fas fa-eye"></i>
                                                         </a>
                                                     @endcan
                                                     @can('casuals_delete')
@@ -121,6 +120,22 @@
         </div>
     </section>
 @endsection
+{{-- #showCalendarModal --}}
+<div class="modal fade" id="showCalendarModal" tabindex="-1" role="dialog" aria-labelledby="exampleshowCalendarModal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h5 class="modal-title text-center" id="exampleshowCalendarModal"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="calendar"></div>
+            </div>
+        </div>
+    </div>
+</div>
 
 {{-- #importCasualModal --}}
 <div class="modal fade" id="importCasualModal" tabindex="-1" role="dialog" aria-labelledby="exampleImportCasualModal">
@@ -144,11 +159,10 @@
 </div>
 
 
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" />
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
-
-
 
 {{-- lets receive error message from controller --}}
 <script>
@@ -176,44 +190,53 @@
 </script>
 
 <script>
-    // casual example object
-    //     {
-    //     "id": 1,
-    //     "casual_id": 198,
-    //     "date": "2023-11-15",
-    //     "clock_in": "12:21:39",
-    //     "clock_out": "14:18:00",
-    //     "created_at": "2023-11-15T09:21:39.000000Z",
-    //     "updated_at": "2023-11-15T11:18:00.000000Z"
-    // }
-
     function viewCasual(casual) {
-        console.log(casual)
-        let html = '';
+        $('#showCalendarModal').modal('show');
+        //append the name of casual to the modal
+        $('#exampleshowCalendarModal').text('Attendance' + ' ' + 'For' + ' ' + casual.first_name + ' ' + casual
+            .last_name);
+        if (casual.casual_attendance.length == 0) {
+            $('#calendar').text('No Attendance Found');
+        }
 
-        casual.forEach(element => {
-            html += `
-            <tr>
-                <td>${element.date}</td>
-                <td>${element.clock_in}</td>
-                <td>${element.clock_out}</td>
-            </tr>
-            `
+        // Assuming casual_attendance is an array of attendance records
+        var attendanceData = casual.casual_attendance;
+
+        // Initialize FullCalendar
+        var calendarElement = document.getElementById("calendar");
+        var calendarInstance = new calendarJs(calendarElement, {
+            manualEditingEnabled: false,
+            eventColor: '#337ab7', // Background color
+            eventTextColor: '#ffffff', // Text color
+
         });
 
-        $('#casualAttendance').html(html);
+        // Function to convert attendance data to FullCalendar events
+        function getCalendarEvents(attendanceData) {
+            var events = [];
 
-        $('#viewCasualModal').modal('show');
+            attendanceData.forEach(function(attendance) {
+                events.push({
+                    from: new Date(attendance.date + ' ' + attendance.clock_in),
+                    to: new Date(attendance.date + ' ' + attendance.clock_out),
+                    title: 'Present',
+                });
+            });
 
+            return events;
+        }
 
+        // Get events from attendance data and add to calendar
+        var events = getCalendarEvents(attendanceData);
+        calendarInstance.addEvents(events);
     }
 </script>
-
 
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('assets/modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/modules/datatables.net-select-bs4/css/select.bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('js/dist/calendar.js.css') }}">
 @endsection
 
 @section('scripts')
@@ -221,4 +244,6 @@
     <script src="{{ asset('assets/modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('assets/modules/datatables.net-select-bs4/js/select.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('js/casual/index.js') }}"></script>
+    <script src="{{ asset('js/casual/index.js') }}"></script>
+    <script src="{{ asset('js/dist/calendar.js') }}"></script>
 @endsection
