@@ -24,7 +24,7 @@ class CasualsController extends Controller
 
         if ($casual) {
             // Check if there is a record for the current day
-            $attendanceRecord = $casual->casualAttendance()->whereDate('clock_in', now()->toDateString())->first();
+            $attendanceRecord = $casual->casualAttendance()->whereDate('date', now()->toDateString())->first();
 
             if ($attendanceRecord) {
                 // Attendance record exists for the current day
@@ -32,6 +32,8 @@ class CasualsController extends Controller
                     // Clock-in value is already set, update clock-out
                     $attendanceRecord->update(['clock_out' => now()]);
                     $message = 'Clock-out time updated successfully';
+                } elseif($attendanceRecord->clock_out) {
+                    $message = 'You have been checked out successfully';
                 } else {
                     // Clock-in value is not set, update clock-in
                     $attendanceRecord->update(['clock_in' => now(),'date' => now()->toDateString()]);
