@@ -28,16 +28,20 @@ class CasualsController extends Controller
 
             if ($attendanceRecord) {
                 // Attendance record exists for the current day
-                if ($attendanceRecord->clock_in) {
-                    // Clock-in value is already set, update clock-out
-                    $attendanceRecord->update(['clock_out' => now()]);
-                    $message = 'Clock-out time updated successfully';
-                } elseif($attendanceRecord->clock_out) {
-                    $message = 'You have been checked out successfully';
+                if ($attendanceRecord->clock_out) {
+                    // Clock-out value is already set, return error
+                    return response()->json(['message' => 'You have already clocked out for today'], 400);
                 } else {
-                    // Clock-in value is not set, update clock-in
-                    $attendanceRecord->update(['clock_in' => now(),'date' => now()->toDateString()]);
-                    $message = 'Clock-in time updated successfully';
+
+                    if ($attendanceRecord->clock_in) {
+                        // Clock-in value is already set, update clock-out
+                        $attendanceRecord->update(['clock_out' => now()]);
+                        $message = 'Clock-out time updated successfully';
+                    } else {
+                        // Clock-in value is not set, update clock-in
+                        $attendanceRecord->update(['clock_in' => now(),'date' => now()->toDateString()]);
+                        $message = 'Clock-in time updated successfully';
+                    }
                 }
             } else {
                 // No attendance record for the current day, create a new one
