@@ -16,14 +16,16 @@
                             <div class="card-header">
                                 <a href="{{ route('admin.employees.create') }}" class="btn btn-icon icon-left btn-primary"><i
                                         class="fas fa-plus"></i> {{ __('employee.add_employee') }}</a>
-                                <div style="position: absolute;left: 80%;">
+                                <div
+                                    style="position: relative;
+                                        left: 55vw; overflow:hidden;">
                                     <a href="javascript:void(0)" id="importCasual"
                                         class="btn btn-icon icon-left btn-success float-end" data-toggle="modal"
                                         data-target="#exportCasualModal"><i class="fas fa-plus float-end"></i>Import
                                         Enployees</a>
 
                                     <a href="javascript:void(0)" id="exportEmployees" onclick="exportEmployees()"
-                                        class="btn btn-icon icon-left btn-success float-end">
+                                        class="btn btn-icon icon-left btn-info float-end">
                                         <i class="fas fa-plus float-end"></i>Export Employees
                                     </a>
 

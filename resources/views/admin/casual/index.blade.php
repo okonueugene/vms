@@ -34,7 +34,7 @@
                                         Casual</a>
 
                                     <a href="{{ route('admin.casuals.export') }}"
-                                        class="btn btn-icon icon-left btn-warning float-end"><i
+                                        class="btn btn-icon icon-left btn-info float-end"><i
                                             class="fas fa-plus float-end"></i>Export
                                         Casual</a>
                                 </div>

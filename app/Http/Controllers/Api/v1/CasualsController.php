@@ -20,7 +20,7 @@ class CasualsController extends Controller
                 // Attendance record exists for the current day
                 if ($attendanceRecord->clock_out) {
                     // Clock-out value is already set, return error
-                    return response()->json(['message' => 'You have already clocked out for today'], 400);
+                    return response()->json(['data' => ['status' => 200,'message' => 'You have already clocked out for today']], 200);
                 } else {
 
                     if ($attendanceRecord->clock_in) {
@@ -43,9 +43,9 @@ class CasualsController extends Controller
                 $message = 'Clock-in time recorded successfully';
             }
 
-            return response()->json(['message' => $message], 200);
+            return response()->json(['data' => ['status' => 200,'message' => $message]], 200);
         } else {
-            return response()->json(['message' => 'Casual not found. Please register first.'], 404);
+            return response()->json(['data' => ['status' => 400, 'message' => 'Casual not found. Please register first.']], 400);
         }
     }
 
