@@ -8,7 +8,7 @@
         <div class="section-body">
             <div class="row">
                 <div class="col-12">
-                    <div class="search">
+                    <div class="s">
                         <form action="{{ route('admin.casuals.search') }}" method="GET" id="search">
                             <div class="input-group mb-3 w-50" id="search">
                                 <input type="text" class="form-control" name="search" placeholder="Search Casuals"
@@ -206,8 +206,10 @@
         var calendarElement = document.getElementById("calendar");
         var calendarInstance = new calendarJs(calendarElement, {
             manualEditingEnabled: false,
-            eventColor: '#337ab7', // Background color
-            eventTextColor: '#ffffff', // Text color
+            defaultEventTextColor: '#00ff00',
+            defaultEventBackgroundColor: '00ff00',
+            autoRefreshTimerDelay: 0,
+            defaultEventBorderColor: '#ffffff',
 
         });
 

@@ -33,7 +33,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('employee/{id}/show', [EmployeeController::class, 'show']); //done
 
     //Casuals
-    Route::get('casual', [CasualsController::class, 'updateClockStatus']); //done
+    Route::get('casual/{id}', [CasualsController::class, 'updateClockStatus']); //done
 
     //Pre-Register
     Route::get('preregister/', [PreRegisterController::class, 'index']); //done

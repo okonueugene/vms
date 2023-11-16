@@ -8,19 +8,9 @@ use App\Http\Controllers\Controller;
 
 class CasualsController extends Controller
 {
-    public function updateClockStatus(Request $request)
+    public function updateClockStatus($official_identification_number)
     {
-        $requestData = $request->all();
-
-        // Validate the request data as needed...
-
-        if ($request->has('official_identification_number')) {
-            $casual = Casual::where('official_identification_number', $request->official_identification_number)->first();
-        } elseif ($request->has('phone')) {
-            $casual = Casual::where('phone', $request->phone)->first();
-        } else {
-            return response()->json(['message' => 'Please provide either official identification number or phone number of a registered casual'], 400);
-        }
+        $casual = Casual::where('official_identification_number', $official_identification_number)->first();
 
         if ($casual) {
             // Check if there is a record for the current day

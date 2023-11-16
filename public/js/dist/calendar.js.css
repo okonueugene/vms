@@ -11,13 +11,13 @@
   --day-date-picker-hover-color: #a7a7a7;
   --grid-border-color: #B0B0B0;
   --alert-color: #C60000;
-  --event-color: #484848;
+  --event-color: #24a353;
   --event-text-color: var(--light-color);
   --event-color-all-day: #1b3752;
   --event-text-color-all-day: var(--light-color);
-  --day-names-color: #E0E0E0;
-  --input-border-color: #A8A8A8;
-  --input-background-color: #FFFFFF;
+  --day-names-color: #ffffff;
+  --input-border-color: #ffffff;
+  --input-background-color: #ffffff;
   --area-disabled-stripped: rgba( 40, 40, 40, 0.1 );
   --area-disabled-stripped-weekend-day: rgba( 40, 40, 40, 0.2 );
   --link-color: #2471A3;
