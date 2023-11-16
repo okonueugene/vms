@@ -85,6 +85,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'installed', 'backen
     Route::get('casuals', [CasualController::class, 'index'])->name('casuals.index');
     Route::get('casuals-search', [CasualController::class, 'index'])->name('casuals.search');
     Route::get('casuals/create', [CasualController::class, 'create'])->name('casuals.create');
+    Route::get('casuals/show/{id}', [CasualController::class, 'show'])->name('casuals.show');
     Route::post('casuals/store', [CasualController::class, 'store'])->name('casuals.store');
     Route::get('casuals/edit/{id}', [CasualController::class, 'edit'])->name('casuals.edit');
     Route::put('casuals/update/{id}', [CasualController::class, 'update'])->name('casuals.update');

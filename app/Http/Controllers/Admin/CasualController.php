@@ -62,7 +62,13 @@ class CasualController extends Controller
 
     public function show($id)
     {
-        $this->data['casual'] = [];
+        $casual = Casual::findOrFail($id);
+
+        if (!$casual) {
+            return redirect()->back()->with('error', 'Casual not found');
+        }
+
+        return view('admin.casual.show', compact('casual'));
     }
 
     public function store(Request $request)

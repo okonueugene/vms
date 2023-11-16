@@ -135,7 +135,7 @@ Breadcrumbs::for(
     'casuals/show',
     function ($trail) {
         $trail->parent('casuals');
-        $trail->push(trans('validation.attributes.show'));
+        $trail->push('Show');
 
     }
 );

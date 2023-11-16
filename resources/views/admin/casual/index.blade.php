@@ -80,12 +80,15 @@
                                                     @endif
                                                 </td>
                                                 <td>
+                                                    <a href="{{ route('admin.casuals.show', $casual->id) }}"
+                                                        class="btn btn-icon btn-info"><i class="far fa-eye"></i></a>
+
                                                     @can('casuals_edit')
                                                         <a href="{{ route('admin.casuals.edit', $casual->id) }}"
                                                             class="btn btn-icon btn-primary"><i class="far fa-edit"></i></a>
                                                         <a href="javascript:void(0)" class="btn btn-icon btn-info"
                                                             onclick="viewCasual({{ $casual }}) "> <i
-                                                                class="fas fa-eye"></i>
+                                                                class="fas fa-calendar"></i>
                                                         </a>
                                                     @endcan
                                                     @can('casuals_delete')
