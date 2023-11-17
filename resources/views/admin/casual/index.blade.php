@@ -28,7 +28,7 @@
 
                                 <div
                                     style="position: relative;
-                                right: -50%;
+                                right: -65%;
                                  overflow:hidden;">
                                     <a href="javascript:void(0)" id="importCasual"
                                         class="btn btn-icon icon-left btn-success float-end" data-toggle="modal"
