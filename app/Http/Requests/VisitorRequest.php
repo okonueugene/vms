@@ -83,9 +83,9 @@ class VisitorRequest extends FormRequest
     {
         $visitor = Visitor::where('national_identification_no', $nid)->first();
         if ($visitor && ($visitor_old == 1)) {
-            return  ['required', 'numeric', 'max:100'];
+            return  ['required', 'numeric' ];
         } else {
-            return  ['required', 'numeric', 'max:100', 'unique:visitors,national_identification_no'];
+            return  ['required', 'numeric', 'unique:visitors,national_identification_no'];
         }
     }
 }
