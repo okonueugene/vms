@@ -25,12 +25,12 @@ class VisitorRequest extends FormRequest
     {
         if ($this->visitor) {
             $email                      = blank(request('email')) ? '' : ['string', Rule::unique("visitors", "email")->ignore($this->visitor->visitor_id)];
-            $national_identification_no = ['required', Rule::unique("visitors", "national_identification_no")->ignore($this->visitor->visitor_id)];
-            $phone                      = ['required',  Rule::unique("visitors", "phone")->ignore($this->visitor->visitor_id)];
+            $national_identification_no = ['required', 'string', 'max:100', Rule::unique("visitors", "national_identification_no")->ignore($this->visitor->visitor_id)];
+            $phone                      = ['required', 'string', Rule::unique("visitors", "phone")->ignore($this->visitor->visitor_id)];
         } elseif ($this->visitor_id) {
             $email    = blank(request('email')) ? '' : ['email', 'string'];
-            $phone    = ['required'];
-            $national_identification_no    = ['required', 'max:100'];
+            $phone    = ['required', 'string'];
+            $national_identification_no    = ['required', 'string', 'max:100'];
         } else {
             $uniqueEmail = $this->checkUniqueEmail(request('email'), request('visitor_old'));
             $uniquePhone = $this->checkUniquePhone(request('phone'), request('visitor_old'));
@@ -74,18 +74,18 @@ class VisitorRequest extends FormRequest
     {
         $visitor = Visitor::where('phone', $phone)->first();
         if ($visitor && ($visitor_old == 1)) {
-            return  ['required', 'numeric', 'regex:/^[0-9]/'];
+            return  ['required', 'string', 'numeric', 'regex:/^[0-9]/'];
         } else {
-            return  ['required',  'numeric', 'regex:/^[0-9]/', 'unique:visitors,phone'];
+            return  ['required', 'string', 'numeric', 'regex:/^[0-9]/', 'unique:visitors,phone'];
         }
     }
     public function checkUniqueNID($nid, $visitor_old)
     {
         $visitor = Visitor::where('national_identification_no', $nid)->first();
         if ($visitor && ($visitor_old == 1)) {
-            return  ['required', 'numeric' ];
+            return  ['required', 'string', 'max:100'];
         } else {
-            return  ['required', 'numeric', 'unique:visitors,national_identification_no'];
+            return  ['required', 'string', 'max:100', 'unique:visitors,national_identification_no'];
         }
     }
 }
