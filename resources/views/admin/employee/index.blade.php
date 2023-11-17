@@ -18,7 +18,7 @@
                                         class="fas fa-plus"></i> {{ __('employee.add_employee') }}</a>
                                 <div
                                     style="position: relative;
-                                        left: 55vw; overflow:hidden;">
+                                    right: -65%;overflow:hidden;">
                                     <a href="javascript:void(0)" id="importCasual"
                                         class="btn btn-icon icon-left btn-success float-end" data-toggle="modal"
                                         data-target="#exportCasualModal"><i class="fas fa-plus float-end"></i>Import
