@@ -26,8 +26,10 @@
                                 <a href="{{ route('admin.casuals.create') }}" class="btn btn-icon icon-left btn-primary"><i
                                         class="fas fa-plus"></i>Add Casual</a>
 
-                                <div style="position: relative;
-                                left: 55vw; overflow:hidden;">
+                                <div
+                                    style="position: relative;
+                                right: -50%;
+                                 overflow:hidden;">
                                     <a href="javascript:void(0)" id="importCasual"
                                         class="btn btn-icon icon-left btn-success float-end" data-toggle="modal"
                                         data-target="#importCasualModal"><i class="fas fa-plus float-end"></i>Import
@@ -45,7 +47,7 @@
 
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-striped table-sm">
+                                <table class="table table-striped table-md">
                                     <thead>
                                         <tr>
                                             <th>Id</th>
