@@ -25,7 +25,7 @@ class VisitorRequest extends FormRequest
     {
         if ($this->visitor) {
             $email                      = blank(request('email')) ? '' : ['string', Rule::unique("visitors", "email")->ignore($this->visitor->visitor_id)];
-            $national_identification_no = ['required',  'max:100', Rule::unique("visitors", "national_identification_no")->ignore($this->visitor->visitor_id)];
+            $national_identification_no = ['required', Rule::unique("visitors", "national_identification_no")->ignore($this->visitor->visitor_id)];
             $phone                      = ['required',  Rule::unique("visitors", "phone")->ignore($this->visitor->visitor_id)];
         } elseif ($this->visitor_id) {
             $email    = blank(request('email')) ? '' : ['email', 'string'];
