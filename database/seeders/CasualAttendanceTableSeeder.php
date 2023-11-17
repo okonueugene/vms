@@ -14,14 +14,14 @@ class CasualAttendanceTableSeeder extends Seeder
         $casuals = Casual::all();
 
         $startDate = Carbon::create(2023, 10, 1);
-        $endDate = Carbon::now();
+        $endDate = Carbon::create(2023, 12, 31);
 
         foreach ($casuals as $casual) {
             $usedDates = [];
 
             // Randomize the number of dates to generate for each casual
-            $numberOfDates = 39
-            ;
+            $numberOfDates = rand(15, 30);
+
             for ($i = 0; $i < $numberOfDates; $i++) {
                 // Generate a unique random date within the specified range
                 do {
