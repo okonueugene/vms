@@ -250,7 +250,6 @@ class VisitorService
         $visitor->gender = $request['gender'];
         $visitor->address = $request['address'];
         $visitor->national_identification_no = $request['national_identification_no'];
-        $visitor->belongings = $request['belongings'];
         $visitor->is_pre_register = false;
         $file_name = 'qrcode-' . preg_replace("/[^0-9]/", "", $request['phone']) . '.png';
         $visitor->barcode = $file_name;
