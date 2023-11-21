@@ -7,13 +7,16 @@ use App\Models\User;
 use App\Models\Employee;
 use App\Models\Department;
 use App\Models\Designation;
+use Illuminate\Http\Request;
+use App\Mail\UserPasswordMail;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Validator;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Date;
-use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 
 class EmployeesImport implements ToModel, WithHeadingRow
 {
@@ -82,6 +85,7 @@ class EmployeesImport implements ToModel, WithHeadingRow
             'phone' => 'required|unique:employees,phone', // Add validation for unique phone
             'gender' => 'required', // Add validation for valid gender values
             'official_identification_number' => 'required', // Add validation if necessary
+            'date_of_joining' => 'required|date', // Add validation for valid date format
             'status' => 'required|in:Active,Inactive', // Add validation for valid status values
             'department' => 'required', // Add validation if necessary
             'designation' => 'required', // Add validation if necessary
@@ -103,7 +107,8 @@ class EmployeesImport implements ToModel, WithHeadingRow
         $input['email'] = $row['email'] ?? null;
         $input['phone'] = $row['phone'] ?? null;
         $input['status'] = $row['status'] == 'Active' ? 5 : 10;
-        $input['password'] = Hash::make('12345678');
+        $input['password'] = Hash::make($password = $this->generatePassword());
+        // dd($input);
         $user = User::create($input);
         $role = Role::find(2);
         $user->assignRole($role->name);
@@ -133,6 +138,11 @@ class EmployeesImport implements ToModel, WithHeadingRow
 
 
         }
+
+        //send email
+        $this->sendEmail($user, $password);
+
+
         return $result;
 
     }
@@ -142,5 +152,25 @@ class EmployeesImport implements ToModel, WithHeadingRow
         $emails = explode('@', $email);
         return $emails[0] . mt_rand();
     }
+
+    //function to generate password with 8 characters and 2 special characters
+    private function generatePassword()
+    {
+        $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-=+;:,.?";
+        $password = substr(str_shuffle($chars), 0, 8);
+        return $password;
+    }
+
+    //send email using php  mail
+
+    private function sendEmail($user, $password)
+    {
+        $to = $user->email;
+        $subject = "Your Login Credentials";
+        $txt = "Your Login Credentials are as follows: \n Username: " . $user->email . "\n Password: " . $password;
+        $headers = "From: Visitor Management System";
+        mail($to, $subject, $txt, $headers);
+    }
+
 
 }
