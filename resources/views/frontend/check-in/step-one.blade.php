@@ -1,190 +1,254 @@
 @extends('frontend.layouts.frontend')
 
 @section('content')
-<section id="pm-banner-1" class="">
-    <div class="container">
-        <div class="row custom-css-step-one">
-            <div class="col-lg-6 p-0">
-                <div style="margin: 10px;">
-                    <h2 class="form-title">{{ __('Visitor Details') }}</h2>
-                    {!! Form::open(['route' => 'check-in.step-one.next', 'class' => 'form-horizontal', 'files' => true])
-                    !!}
-                    <div class="save">
-                        <div class="visitor" id="visitor">
-                            <div class="row">
-                                @if (@$visitor->image)
-                                    <div class="col-md-12 col-sm-12 text-center mb-2">
-                                        <img src="{{ $visitor->image }}" alt="Visitor Image" class="w-25">
-                                    </div>
-                                @endif
-                                <div class="col-md-6 col-sm-12">
-                                    <div class="form-group">
-                                        <label class="label-css" for="first_name">{{ __('visitor.first_name') }} <span class="text-danger">*</span></label>
-                                        <input type="text" name="first_name" id="first_name" class="form-control input-css @error('first_name') is-invalid @enderror" value="{{ isset($visitor->first_name) ? $visitor->first_name: old('first_name')}}" {{ isset($visitor->first_name) ? 'readonly' : '' }}>
-                                        @error('first_name')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
+    <section id="pm-banner-1" class="">
+        <div class="container">
+            <div class="row custom-css-step-one">
+                <div class="col-lg-6 p-0">
+                    <div style="margin: 10px;">
+                        <h2 class="form-title">{{ __('Visitor Details') }}</h2>
+                        {!! Form::open(['route' => 'check-in.step-one.next', 'class' => 'form-horizontal', 'files' => true]) !!}
+                        <div class="save">
+                            <div class="visitor" id="visitor">
+                                <div class="row">
+                                    @if (@$visitor->image)
+                                        <div class="col-md-12 col-sm-12 text-center mb-2">
+                                            <img src="{{ $visitor->image }}" alt="Visitor Image" class="w-25">
                                         </div>
-                                        @enderror
+                                    @endif
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label class="label-css" for="first_name">{{ __('visitor.first_name') }} <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" name="first_name" id="first_name"
+                                                class="form-control input-css @error('first_name') is-invalid @enderror"
+                                                value="{{ isset($visitor->first_name) ? $visitor->first_name : old('first_name') }}"
+                                                {{ isset($visitor->first_name) ? 'readonly' : '' }}>
+                                            @error('first_name')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
 
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-sm-12">
-                                    <div class="form-group">
-                                        <label class="label-css" for="">{{ __('visitor.last_name') }} <span class="text-danger">*</span></label>
-                                        <input type="text" name="last_name" id="last_name" class="form-control input-css @error('last_name') is-invalid @enderror" value="{{ isset($visitor->last_name) ? $visitor->last_name :old('last_name')}}" {{ isset($visitor->last_name) ? 'readonly' : '' }}>
-                                        @error('last_name')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
                                         </div>
-                                        @enderror
                                     </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-
-                                <div class="col-md-6 col-sm-12">
-                                    <div class="form-group mt-1">
-                                        <label class="label-css" for="employee_id">{{ __('visitor.select_employee') }} <span class="text-danger">*</span></label>
-                                        <select id="employee_id" name="employee_id" class="form-control input-css js-select2 @error('employee_id') is-invalid @enderror">
-                                            <option value="">{{ __('Select Employee') }}</option>
-                                            @foreach($employees as $key => $employee)
-                                            <option value="{{ $employee->id }}"  {{ old('employee_id',$employee_id) == $employee->id ? "selected" : '' }}>
-                                                {{ $employee->name }} ( {{ optional($employee->department)->name }} )
-                                            </option>
-                                            @endforeach
-                                        </select>
-
-
-                                        @error('employee_id')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label class="label-css" for="">{{ __('visitor.last_name') }} <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" name="last_name" id="last_name"
+                                                class="form-control input-css @error('last_name') is-invalid @enderror"
+                                                value="{{ isset($visitor->last_name) ? $visitor->last_name : old('last_name') }}"
+                                                {{ isset($visitor->last_name) ? 'readonly' : '' }}>
+                                            @error('last_name')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
                                         </div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-sm-12">
-                                    <div class="form-group">
-                                        <label class="label-css" for="">{{ __('visitor.phone') }} <span class="text-danger">*</span><span class="text-info"> (With Country Code,Without + sign)</span></label>
-                                        <input type="text" name="phone" id="phone" class="form-control input-css @error('phone') is-invalid @enderror" value="{{ isset($visitor->phone) ? $visitor->phone:old('phone') }}">
-                                        @error('phone')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 col-sm-12">
-                                    <div class="form-group">
-                                        <label class="label-css" for="">{{ __('visitor.email') }}</label>
-                                        <input type="text" name="email" id="email" class="form-control input-css @error('email') is-invalid @enderror" value="{{ isset($visitor->email) ? $visitor->email:old('email') }}">
-                                        @error('email')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
                                     </div>
                                 </div>
 
-                                <div class="col-md-6 col-sm-12">
-                                    <div class="form-group {{ $errors->has('gender') ? 'has-error' : ''}}">
-                                        <label class="label-css" for="gender">{{ __('visitor.gender') }}</label>
-                                        <select id="gender" name="gender" class="form-control input-css @error('gender') is-invalid @enderror" {{ isset($visitor->gender) ? 'readonly' : '' }}>
-                                            @foreach(trans('genders') as $key => $gender)
-                                            <option value="{{ $key }}" {{ ((isset($visitor->gender) ? $visitor->gender:old('gender')) == $key) ? 'selected' : '' }}>
-                                                {{ $gender }}
-                                            </option>
-                                            @endforeach
-                                        </select>
-                                        @error('gender')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
+                                <div class="row">
 
-                            <div class="row">
-                                <div class="col-md-6 col-sm-12">
-                                    <div class="form-group">
-                                        <label class="label-css" for="company_name">{{ __('visitor.company_name') }}</label>
-                                        <input type="text" name="company_name" id="company_name" class="form-control input-css @error('company_name') is-invalid @enderror" value="{{ isset($company_name) ?  $company_name:  old('company_name',isset($visitor->company_name) ? $visitor->company_name:'') }}">
-                                        @error('company_name')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group mt-1">
+                                            <label class="label-css" for="employee_id">{{ __('visitor.select_employee') }}
+                                                <span class="text-danger">*</span></label>
+                                            <select id="employee_id" name="employee_id"
+                                                class="form-control input-css js-select2 @error('employee_id') is-invalid @enderror">
+                                                <option value="">{{ __('Select Employee') }}</option>
+                                                @foreach ($employees as $key => $employee)
+                                                    <option value="{{ $employee->id }}"
+                                                        {{ old('employee_id', $employee_id) == $employee->id ? 'selected' : '' }}>
+                                                        {{ $employee->name }} (
+                                                        {{ optional($employee->department)->name }} )
+                                                    </option>
+                                                @endforeach
+                                            </select>
+
+
+                                            @error('employee_id')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
                                         </div>
-                                        @enderror
+                                    </div>
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label class="label-css" for="">{{ __('visitor.phone') }} <span
+                                                    class="text-danger">*</span><span class="text-info"> (With Country
+                                                    Code,Without + sign)</span></label>
+                                            <input type="text" name="phone" id="phone"
+                                                class="form-control input-css @error('phone') is-invalid @enderror"
+                                                value="{{ isset($visitor->phone) ? $visitor->phone : old('phone') }}">
+                                            @error('phone')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label class="label-css" for="">{{ __('visitor.email') }}</label>
+                                            <input type="text" name="email" id="email"
+                                                class="form-control input-css @error('email') is-invalid @enderror"
+                                                value="{{ isset($visitor->email) ? $visitor->email : old('email') }}">
+                                            @error('email')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group {{ $errors->has('gender') ? 'has-error' : '' }}">
+                                            <label class="label-css" for="gender">{{ __('visitor.gender') }}</label>
+                                            <select id="gender" name="gender"
+                                                class="form-control input-css @error('gender') is-invalid @enderror"
+                                                {{ isset($visitor->gender) ? 'readonly' : '' }}>
+                                                @foreach (trans('genders') as $key => $gender)
+                                                    <option value="{{ $key }}"
+                                                        {{ (isset($visitor->gender) ? $visitor->gender : old('gender')) == $key ? 'selected' : '' }}>
+                                                        {{ $gender }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('gender')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="col-md-6 col-sm-12">
-                                    <div class="form-group">
-                                        <label class="label-css" for="national_identification_no">{{ __('visitor.national_identification_no') }} <span class="text-danger">*</span></label>
-                                        <input type="text" name="national_identification_no" id="national_identification_no" class="form-control input-css @error('national_identification_no') is-invalid @enderror" value="{{ isset($visitor->national_identification_no) ? $visitor->national_identification_no : old('national_identification_no') }}" {{ isset($visitor->national_identification_no)  ? 'readonly' : ''}}>
-                                        @error('national_identification_no')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label class="label-css"
+                                                for="company_name">{{ __('visitor.company_name') }}</label>
+                                            <input type="text" name="company_name" id="company_name"
+                                                class="form-control input-css @error('company_name') is-invalid @enderror"
+                                                value="{{ isset($company_name) ? $company_name : old('company_name', isset($visitor->company_name) ? $visitor->company_name : '') }}">
+                                            @error('company_name')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
                                         </div>
-                                        @enderror
                                     </div>
-                                </div>
-                            </div>
-                            <div class="row">
 
-                                <div class="col-md-6 col-sm-12">
-                                    <div class="form-group {{ $errors->has('purpose') ? 'has-error' : ''}}">
-                                        <label class="label-css" for="purpose">{{ __('visitor.purpose') }} <span class="text-danger">*</span></label>
-                                        <textarea name="purpose" class="summernote-simple form-control height-textarea @error('purpose')is-invalid @enderror" id="purpose" >{{old('purpose') }}</textarea>
-                                        @error('purpose')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label class="label-css"
+                                                for="national_identification_no">{{ __('visitor.national_identification_no') }}
+                                                <span class="text-danger">*</span></label>
+                                            <input type="text" name="national_identification_no"
+                                                id="national_identification_no"
+                                                class="form-control input-css @error('national_identification_no') is-invalid @enderror"
+                                                value="{{ isset($visitor->national_identification_no) ? $visitor->national_identification_no : old('national_identification_no') }}"
+                                                {{ isset($visitor->national_identification_no) ? 'readonly' : '' }}>
+                                            @error('national_identification_no')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
                                         </div>
-                                        @enderror
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label class="label-css" for="belongings">Personal Items</label>
+                                            <input type="text" name="belongings" id="belongings"
+                                                class="form-control input-css @error('belongings') is-invalid @enderror"
+                                                value="{{ isset($belongings) ? $belongings : old('belongings', isset($visitor->belongings) ? $visitor->belongings : '') }}">
+                                            @error('')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
 
-                                <div class="col-md-6 col-sm-12">
-                                    <div class="form-group {{ $errors->has('address') ? 'has-error' : ''}}">
-                                        <label class="label-css" for="address">{{ __('visitor.address') }}</label>
-                                        <textarea name="address" class="summernote-simple form-control height-textarea @error('address')is-invalid @enderror" id="address" >{{ isset($visitor->address) ? $visitor->address :old('address')}}</textarea>
-                                        @error('address')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label class="label-css" for="vehicle_registration_no">Vehicle Registration No
+                                            </label>
+                                            <input type="text" name="vehicle_registration_no"
+                                                id="vehicle_registration_no"
+                                                class="form-control input-css @error('vehicle_registration_no') is-invalid @enderror"
+                                                value="{{ isset($visitor->vehicle_registration_no) ? $visitor->vehicle_registration_no : old('vehicle_registration_no') }}">
+                                            @error('vehicle_registration_no')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
                                         </div>
-                                        @enderror
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row mt-3">
-                                <div class="col-6">
-                                    <a href="{{ route('check-in') }}" class="btn cancel-btn float-left">
-                                        <span class="">{{__('frontend.cancel')}}</span>
-                                    </a>
+                                <div class="row">
+
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group {{ $errors->has('purpose') ? 'has-error' : '' }}">
+                                            <label class="label-css" for="purpose">{{ __('visitor.purpose') }} <span
+                                                    class="text-danger">*</span></label>
+                                            <textarea name="purpose" class="summernote-simple form-control height-textarea @error('purpose')is-invalid @enderror"
+                                                id="purpose">{{ old('purpose') }}</textarea>
+                                            @error('purpose')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group {{ $errors->has('address') ? 'has-error' : '' }}">
+                                            <label class="label-css" for="address">{{ __('visitor.address') }}</label>
+                                            <textarea name="address" class="summernote-simple form-control height-textarea @error('address')is-invalid @enderror"
+                                                id="address">{{ isset($visitor->address) ? $visitor->address : old('address') }}</textarea>
+                                            @error('address')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-6">
-                                    <button type="submit" class="btn continue-btn float-right btn-submit-one" id="continue">
-                                        {{__('frontend.continue')}}
-                                    </button>
+                                <div class="row mt-3">
+                                    <div class="col-6">
+                                        <a href="{{ route('check-in') }}" class="btn cancel-btn float-left">
+                                            <span class="">{{ __('frontend.cancel') }}</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-6">
+                                        <button type="submit" class="btn continue-btn float-right btn-submit-one"
+                                            id="continue">
+                                            {{ __('frontend.continue') }}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <div class="col-lg-6 image-display d-flex justify-content-end ">
+                    <img class="img-css" src="{{ asset('frontend/images/vps.png') }}" alt="">
+                </div>
             </div>
-            <div class="col-lg-6 image-display d-flex justify-content-end ">
-                <img class="img-css" src="{{ asset('frontend/images/vps.png') }}" alt="">
+            <hr class="hr-line">
+            <div class="d-flex justify-content-center footer-text pb-3">
+                <span> {{ setting('site_footer') }}</span>
             </div>
         </div>
-        <hr class="hr-line">
-        <div class="d-flex justify-content-center footer-text pb-3">
-            <span> {{setting('site_footer')}}</span>
-        </div>
-    </div>
-</section>
+    </section>
 @endsection
 
 @push('css')
@@ -192,21 +256,21 @@
 @endpush
 
 @section('scripts')
-<script src="{{ asset('assets/modules/select2/dist/js/select2.full.min.js') }}"></script>
+    <script src="{{ asset('assets/modules/select2/dist/js/select2.full.min.js') }}"></script>
 
-<script>
-   $(document).ready(function() {
-  $(".js-select2").select2({
-    closeOnSelect: false
-  });
+    <script>
+        $(document).ready(function() {
+            $(".js-select2").select2({
+                closeOnSelect: false
+            });
 
-       $(".btn-submit-one").attr("disabled", false);
+            $(".btn-submit-one").attr("disabled", false);
 
-       $(".btn-submit-one").click(function(){
-           $(".btn-submit-one").attr("disabled", true);
-           $('form').submit();
-       });
+            $(".btn-submit-one").click(function() {
+                $(".btn-submit-one").attr("disabled", true);
+                $('form').submit();
+            });
 
-   });
-</script>
+        });
+    </script>
 @endsection

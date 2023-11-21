@@ -107,6 +107,7 @@ class CheckInController extends Controller
             $validatedData = $request->validate([
                 'first_name'                 => 'required',
                 'last_name'                  => 'required',
+                'email'                      => 'required|email|unique:visitors,email',
                 'phone'                      => 'required|unique:visitors,phone',
                 'purpose'                    => 'required',
                 'employee_id'                => 'required|numeric',
@@ -114,6 +115,8 @@ class CheckInController extends Controller
                 'company_name'               => '',
                 'company_employee_id'        => '',
                 'national_identification_no' => 'required|unique:visitors,national_identification_no',
+                'belongings'                 => 'nullable|max:191',
+                'vehicle_registration_no'    => 'nullable|max:191',
                 'is_group_enabled'           => '',
                 'address'                    => '',
                 'oldVisitor'                 => '',
@@ -144,12 +147,18 @@ class CheckInController extends Controller
                 'company_name'               => '',
                 'company_employee_id'        => '',
                 'national_identification_no' => $national_identification_no,
+                'belongings'                 => 'nullable|max:191',
+                'vehicle_registration_no'    => 'nullable|max:191',
                 'is_group_enabled'           => '',
                 'address'                    => '',
                 'oldVisitor'                 => '',
 
             ]);
         }
+
+        $validatedData['belongings'] = $request->get('belongings') ?? null;
+        $validatedData['vehicle_registration_no'] = $request->get('vehicle_registration_no') ?? null;
+
 
 
         $request->session()->put('visitor', $validatedData);
@@ -247,6 +256,8 @@ class CheckInController extends Controller
             $input['phone'] = preg_replace("/[^0-9]/", "", $getVisitor['phone']);
             $input['gender'] = $getVisitor['gender'];
             $input['address'] = $getVisitor['address'];
+            $input['belongings'] = $getVisitor['belongings'];
+            $input['vehicle_registration_no'] = $getVisitor['vehicle_registration_no'];
             $input['national_identification_no'] = $getVisitor['national_identification_no'];
             $input['is_pre_register'] = false;
             $input['status'] = Status::ACTIVE;
@@ -272,6 +283,11 @@ class CheckInController extends Controller
 
             $file_name = 'qrcode-' . preg_replace("/[^0-9]/", "", $getVisitor['phone']) . '.png';
             $visitor->barcode = $file_name;
+            //check if dir exists
+            $directory = public_path('qrcode');
+            if (!file_exists($directory)) {
+                mkdir($directory, 0755, true);
+            }
             $file = public_path('qrcode/' . $file_name);
             QRCode::size(300)->format('png')->generate(route('checkin.visitor-details', preg_replace("/[^0-9]/", "", $getVisitor['phone'])), $file);
             $visitor->save();
