@@ -40,7 +40,7 @@ class VisitorRequest extends FormRequest
             $national_identification_no    = $uniqueNID;
         }
         if(setting('photo_capture_enable')) {
-            $image = 'required|image|mimes:jpeg,png,jpg|max:5098';
+            $image = 'image|mimes:jpeg,png,jpg|max:5098';
         } else {
             $image = 'image|mimes:jpeg,png,jpg|max:5098';
         }

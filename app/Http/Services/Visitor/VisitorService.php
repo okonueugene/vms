@@ -123,6 +123,11 @@ class VisitorService
 
         $file_name = 'qrcode-' . preg_replace("/[^0-9]/", "", $request->input('phone')) . '.png';
         $input['barcode']  = $file_name;
+        // Check if the directory exists, create it if not
+        if (!is_dir(public_path('qrcode'))) {
+            mkdir(public_path('qrcode'), 0777, true);
+        }
+
         $file = public_path('qrcode/' . $file_name);
         QRCode::size(300)->format('png')->generate(route('checkin.visitor-details', preg_replace("/[^0-9]/", "", $request->input('phone'))), $file);
         $visitor = Visitor::create($input);
