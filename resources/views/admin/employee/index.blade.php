@@ -66,7 +66,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleexportCasualModal">Import Casuals</h5>
+                <h5 class="modal-title" id="exampleexportCasualModal">Import Employees</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -146,7 +146,7 @@
         @if (Session::has('error'))
             iziToast.error({
                 title: 'Error',
-                message: '{{ Session::get('error') }}',
+                message: "{{ Session::get('error') }}",
                 position: 'topRight'
             });
         @endif

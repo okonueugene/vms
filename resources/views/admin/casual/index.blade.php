@@ -204,7 +204,6 @@
             $('#calendar').text('No Attendance Found');
         }
 
-        // Assuming casual_attendance is an array of attendance records
         var attendanceData = casual.casual_attendance;
 
         // Initialize FullCalendar

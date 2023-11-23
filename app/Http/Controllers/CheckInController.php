@@ -107,7 +107,7 @@ class CheckInController extends Controller
             $validatedData = $request->validate([
                 'first_name'                 => 'required',
                 'last_name'                  => 'required',
-                'email'                      => 'required|email|unique:visitors,email',
+                'email'                      => 'nullable|email|unique:visitors,email',
                 'phone'                      => 'required|unique:visitors,phone',
                 'purpose'                    => 'required',
                 'employee_id'                => 'required|numeric',

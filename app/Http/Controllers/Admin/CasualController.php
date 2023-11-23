@@ -178,17 +178,15 @@ class CasualController extends Controller
             return redirect()->back()->with('success', 'Casuals imported successfully.');
         } catch (ValidationException $e) {
             // Handle validation exception
-            $errorMessage = implode('<br>', $e->validator->errors()->all());
+            $errorMessage = implode('& ', $e->validator->errors()->all());
             return redirect()->back()->with('error', $errorMessage);
         } catch (QueryException $e) {
             // Handle specific database exception (Integrity constraint violation)
             if (strpos($e->getMessage(), 'Duplicate entry') !== false) {
                 $errorMessage = 'Duplicate entry found. Please check your file for duplicate records.';
-
             } else {
                 // Handle other database exceptions if needed
                 $errorMessage = 'Database error during import.';
-
             }
 
             return redirect()->back()->with('error', $errorMessage);
@@ -204,7 +202,9 @@ class CasualController extends Controller
     private function getErrorMessage(\Exception $e): string
     {
         if ($e instanceof \Illuminate\Validation\ValidationException) {
-            $errorMessage = implode($e->validator->errors()->all());
+            //format messages as html with line break
+            $errorMessage = implode(' & ', $e->validator->errors()->all());
+
         } elseif ($e instanceof \Illuminate\Database\QueryException) {
             $errorMessage = 'Database error during import.';
         } else {

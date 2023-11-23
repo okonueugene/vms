@@ -264,7 +264,15 @@ class VisitorController extends Controller
 
     public function checkout($id)
     {
-        $visitingDetail = VisitingDetails::where('reg_no', $id)->first();
+        // $visitingDetail = VisitingDetails::where('reg_no', $id)->first();
+        $visitingDetail = VisitingDetails::where('reg_no', $id)
+        ->orWhereHas('visitor', function ($query) use ($id) {
+            $query->where('national_identification_no', $id);
+        })
+        ->whereNull('checkout_at')
+        ->latest('created_at')
+        ->first();
+
         if ($visitingDetail) {
             if (blank($visitingDetail->checkout_at)) {
                 if (!blank($visitingDetail->checkin_at)) {

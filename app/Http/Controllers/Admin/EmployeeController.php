@@ -339,7 +339,8 @@ class EmployeeController extends Controller
     {
         if ($e instanceof \Illuminate\Validation\ValidationException) {
             // If the exception is a validation exception, get the error messages
-            return implode('<br>', $e->validator->errors()->all());
+            return implode(' & ', $e->validator->errors()->all());
+
         }
 
         // If it's not a validation exception, return a generic error message
