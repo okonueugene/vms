@@ -15,14 +15,7 @@ $app = new Illuminate\Foundation\Application(
     $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
 );
 
-// Set APP_URL dynamically based on the request
-$urlScheme = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
-$app->bind('url', function () use ($urlScheme) {
-    return new Illuminate\Routing\UrlGenerator(
-        $this->app['router']->getRoutes(),
-        $this->app['request']
-    );
-});
+
 /*
 |--------------------------------------------------------------------------
 | Bind Important Interfaces
