@@ -178,7 +178,7 @@ class CasualController extends Controller
             return redirect()->back()->with('success', 'Casuals imported successfully.');
         } catch (ValidationException $e) {
             // Handle validation exception
-            $errorMessage = implode('& ', $e->validator->errors()->all());
+            $errorMessage = implode(' & ', $e->validator->errors()->all());
             return redirect()->back()->with('error', $errorMessage);
         } catch (QueryException $e) {
             // Handle specific database exception (Integrity constraint violation)

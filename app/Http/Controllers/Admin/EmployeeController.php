@@ -312,7 +312,7 @@ class EmployeeController extends Controller
             return redirect()->back()->with('success', 'Employees imported successfully.');
         } catch (ValidationException $e) {
             // Handle validation exception
-            $errorMessage = implode('<br>', $e->validator->errors()->all());
+            $errorMessage = implode(' & ', $e->validator->errors()->all());
             return redirect()->back()->with('error', $errorMessage);
         } catch (QueryException $e) {
             // Handle specific database exception (Integrity constraint violation)
