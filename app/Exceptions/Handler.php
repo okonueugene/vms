@@ -71,7 +71,10 @@ class Handler extends ExceptionHandler
             return response(['status' => 401, 'message' => 'Unauthorized'], 401);
         }
         if ($exception instanceof TokenMismatchException) {
-            return redirect()->route('login')->withErrors(['message' => 'CSRF token mismatch. Please log in again.']);
+            return redirect()->route('home')->withErrors([
+                'delayMessage' => 'Page not found. Redirecting in 3 seconds...', // Your delay message
+                'delaySeconds' => 3, // Delay in seconds
+            ]);
         }
         if ($exception instanceof NotFoundHttpException) {
             return back()->withErrors([
@@ -81,7 +84,7 @@ class Handler extends ExceptionHandler
         }
         if ($exception instanceof \Spatie\Permission\Exceptions\UnauthorizedException) {
             $this->renderable(function (\Spatie\Permission\Exceptions\UnauthorizedException $e, $request) {
-                return redirect()->route('login')->withErrors(['message' => 'You are not authorized to access this page.']);
+                return redirect()->route('home')->withErrors(['message' => 'You are not authorized to access this page.']);
             });
         }
 

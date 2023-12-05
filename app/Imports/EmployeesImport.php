@@ -128,6 +128,7 @@ class EmployeesImport implements ToModel, WithHeadingRow
             $data['about'] = $row['about'];
             $data['status'] = strtolower($row['status']) == 'active' ? 5 : 10;
             $result = Employee::create($data);
+
         }
 
         return $result;

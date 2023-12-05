@@ -95,8 +95,7 @@ class CheckInController extends Controller
      */
     public function postCreateStepOne(Request $request)
     {
-
-        if ($request->session()->get('is_returned') == false || empty($request->session()->get('is_returned'))) {
+        if ($request->session()->get('is_returned') == false || empty($request->session()->get('is_returned')) && $request->get('returning') != '1') {
 
             $emailValidation = '';
             if (!blank($request->get('email'))) {
@@ -125,7 +124,11 @@ class CheckInController extends Controller
                 $validatedData = array_merge($validatedData, $emailValidation);
             }
         } else {
-            $visitor = Visitor::where('email', $request->get('email'))->first();
+            $visitor = Visitor::where('email', $request->get('email'))
+                ->orWhere('phone', $request->get('phone'))
+                ->orWhere('national_identification_no', $request->get('national_identification_no'))
+                ->first();
+
             $national_identification_no = "";
             if ($visitor) {
                 $email = blank($request->get('email')) ? '' : ['email', 'string', 'unique:visitors,email,' . $visitor->id];

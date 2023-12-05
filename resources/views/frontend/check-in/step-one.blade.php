@@ -193,6 +193,11 @@
                                         </div>
                                     </div>
                                 </div>
+                                @if (isset($visitor->national_identification_no) && isset($visitor->phone))
+                                    <input type="hidden" name="returning" id="returning" value="1">
+                                @else
+                                    <input type="hidden" name="returning" id="returning" value="0">
+                                @endif
                                 <div class="row">
 
                                     <div class="col-md-6 col-sm-12">
