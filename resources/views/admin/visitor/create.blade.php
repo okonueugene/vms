@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="{{ asset('assets/modules/bootstrap-social/bootstrap-social.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/modules/summernote/summernote-bs4.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/modules/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/lib/inttelinput/css/intlTelInput.css') }}">
 @endsection
 
 @section('main-content')
@@ -45,7 +46,7 @@
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col">
-                                        <label>{{ __('visitor.email_address') }}</label> 
+                                        <label>{{ __('visitor.email_address') }}</label>
                                         <input type="text" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}">
                                         @error('email')
                                         <div class="invalid-feedback">
@@ -54,8 +55,11 @@
                                         @enderror
                                     </div>
                                     <div class="form-group col">
-                                        <label>{{ __('visitor.phone') }}</label> <span class="text-danger">*</span><span class="text-info"> (With Country Code,Without + sign)</span>
-                                        <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}">
+                                        <label>{{ __('visitor.phone') }}</label> <span class="text-danger">*</span><span class="text-info"></span>
+                                        <input type="text" name="phone" id="number" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}">
+
+                                        <input type="hidden" id="code" name="country_code" value="1">
+                                        <input type="hidden" id="code_name" name="country_code_name" value="us">
                                         @error('phone')
                                         <div class="invalid-feedback">
                                             {{ $message }}
@@ -177,5 +181,9 @@
     <script src="{{ asset('assets/modules/summernote/summernote-bs4.js') }}"></script>
     <script src="{{ asset('assets/modules/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
     <script src="{{ asset('js/visitor/create.js') }}"></script>
-
+    <script defer src="{{ asset('assets/lib/inttelinput/js/intlTelInput-jquery.js') }}"></script>
+    <script defer src="{{ asset('assets/lib/inttelinput/js/intlTelInput.js') }}"></script>
+    <script defer src="{{ asset('assets/lib/inttelinput/js/utils.js') }}"></script>
+    <script defer src="{{ asset('assets/lib/inttelinput/js/data.js') }}"></script>
+    <script defer src="{{ asset('assets/lib/inttelinput/js/init.js') }}"></script>
 @endsection

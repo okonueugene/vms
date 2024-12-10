@@ -12,7 +12,7 @@ class AttendanceReportController extends BackendController
     public function __construct()
     {
         parent::__construct();
-        $this->data['siteTitle'] = 'Attendance Report';
+        $this->data['sitetitle'] = 'Attendance Report';
         $this->middleware(['permission:attendance-report'])->only('index');
     }
 

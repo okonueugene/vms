@@ -25,13 +25,13 @@ class PreRegisterRequest extends FormRequest
     public function rules()
     {
         if ($this->pre_register) {
-            $email    = ['required', 'email', 'string', Rule::unique("visitors", "email")->ignore($this->pre_register->visitor_id)];
+            $email    = ['nullable','email', 'string', Rule::unique("visitors", "email")->ignore($this->pre_register->visitor_id)];
             $phone    = ['required', 'string', Rule::unique("visitors", "phone")->ignore($this->pre_register->visitor_id)];
-            $national_identification_no    = ['required', 'string', Rule::unique("visitors", "national_identification_no")->ignore($this->pre_register->visitor_id)];
+            $national_identification_no    = ['required','string', Rule::unique("visitors", "national_identification_no")->ignore($this->pre_register->visitor_id)];
         } else {
-            $email    = ['required', 'email', 'string', 'unique:visitors,email'];
+            $email    = ['nullable','email', 'string', 'unique:visitors,email'];
             $phone    = ['required', 'string', 'numeric', 'regex:/^[0-9]/', 'unique:visitors,phone'];
-            $national_identification_no    = ['required', 'string', 'max:100', 'unique:visitors,national_identification_no'];
+            $national_identification_no    = ['required','string', 'max:100', 'unique:visitors,national_identification_no'];
         }
         return [
             'first_name'                 => 'required|string|max:100',

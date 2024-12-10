@@ -1,9 +1,9 @@
 <?php
 namespace Database\Seeders;
+
 use App\Enums\Status;
 use App\Models\Language;
 use Illuminate\Database\Seeder;
-use PragmaRX\Countries\Package\Countries;
 
 class LanguageSeeder extends Seeder
 {
@@ -12,17 +12,29 @@ class LanguageSeeder extends Seeder
      *
      * @return void
      */
-    
     public function run()
     {
-    
-        $language = [
-            'name'      => 'English',
-            'code'      => 'en'  ,
-            'flag_icon' => '🇬🇧',
-            'status'    => Status::ACTIVE,
+        $languages = [
+            [
+                'name'      => 'English',
+                'code'      => 'en',
+                'flag_icon' => '🇬🇧',
+                'status'    => Status::ACTIVE,
+            ],
+            [
+                'name'      => 'German',
+                'code'      => 'de',
+                'flag_icon' => '🇩🇪',
+                'status'    => Status::ACTIVE,
+            ],
+            [
+                'name'      => 'Arabic',
+                'code'      => 'sa',
+                'flag_icon' => '🇸🇦',
+                'status'    => Status::ACTIVE,
+            ]
         ];
-        Language::insert($language);
 
+        Language::insert($languages);
     }
 }

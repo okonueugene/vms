@@ -19,4 +19,5 @@ return array (
   'language' => 'Sprache',
   'addons' => 'Addons',
   'settings' => 'Einstellungen',
+  'employee_report' => 'Medewerkersrapport',
 );

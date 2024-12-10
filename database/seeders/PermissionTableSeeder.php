@@ -1,7 +1,5 @@
 <?php
-
 namespace Database\Seeders;
-
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 
@@ -81,26 +79,6 @@ class PermissionTableSeeder extends Seeder
 
         $i++;
         $permissionArray[$i]['name']       = 'employees_show';
-        $permissionArray[$i]['guard_name'] = 'web';
-
-        $i++;
-        $permissionArray[$i]['name']       = 'casuals';
-        $permissionArray[$i]['guard_name'] = 'web';
-
-        $i++;
-        $permissionArray[$i]['name']       = 'casuals_create';
-        $permissionArray[$i]['guard_name'] = 'web';
-
-        $i++;
-        $permissionArray[$i]['name']       = 'casuals_edit';
-        $permissionArray[$i]['guard_name'] = 'web';
-
-        $i++;
-        $permissionArray[$i]['name']       = 'casuals_delete';
-        $permissionArray[$i]['guard_name'] = 'web';
-
-        $i++;
-        $permissionArray[$i]['name']       = 'casuals_show';
         $permissionArray[$i]['guard_name'] = 'web';
 
         $i++;
@@ -205,6 +183,10 @@ class PermissionTableSeeder extends Seeder
 
         $i++;
         $permissionArray[$i]['name']       = 'attendance-report';
+        $permissionArray[$i]['guard_name'] = 'web';
+
+        $i++;
+        $permissionArray[$i]['name']       = 'employee-report';
         $permissionArray[$i]['guard_name'] = 'web';
 
         $i++;

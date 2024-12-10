@@ -17,15 +17,17 @@ class UserTableSeeder extends Seeder
     public function run()
     {
         User::create([
-            'first_name'     => 'John',
-            'last_name'      => 'Doe',
-            'username'       => 'admin',
-            'email'          => 'admin@example.com',
-            'phone'          => '+15005550006',
-            'status'          => 5,
-            'address'        => 'Dhaka, Bangladesh',
-            'password'       => bcrypt('123456'),
-            'remember_token' => Str::random(10),
+            'first_name'        => 'John',
+            'last_name'         => 'Doe',
+            'username'          => 'admin',
+            'email'             => 'admin@example.com',
+            'phone'             => '1500555000',
+            'country_code'      => "880",
+            'country_code_name' => "bd",
+            'status'            => 5,
+            'address'           => 'Dhaka, Bangladesh',
+            'password'          => bcrypt('123456'),
+            'remember_token'    => Str::random(10),
         ]);
     }
 }

@@ -13,7 +13,7 @@ class AttendanceController extends BackendController
     public function __construct()
     {
         parent::__construct();
-        $this->data['siteTitle'] = 'Attendance';
+        $this->data['sitetitle'] = 'Attendance';
         $this->middleware(['permission:attendance'])->only('index');
         $this->middleware(['permission:attendance_delete'])->only('destroy');
 //

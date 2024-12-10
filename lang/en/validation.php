@@ -220,5 +220,7 @@ return array (
     'language' => 'Language',
     'addons' => 'Addons',
     'whatsapp_settings' => 'WhatsApp Settings',
+    'employee_report' => 'Employee Report',
+    'casuals' => 'Casuals',
   ),
 );

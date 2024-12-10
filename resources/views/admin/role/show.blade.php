@@ -120,9 +120,6 @@
 
 	    function processCheck(event) {
 	        var mainmodule  = $(event).attr('id');
-
-	        console.log(mainmodule);
-
 	        var mainidCreate = mainmodule+"_create";
 	        var mainidEdit   = mainmodule+"_edit";
 	        var mainidDelete = mainmodule+"_delete";

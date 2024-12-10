@@ -11,7 +11,7 @@ class PreRegistersReportController extends BackendController
     public function __construct()
     {
         parent::__construct();
-        $this->data['siteTitle'] = 'PreRegisters Report';
+        $this->data['sitetitle'] = 'PreRegisters Report';
 
         $this->middleware(['permission:admin-pre-registers-report'])->only('index');
     }

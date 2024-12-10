@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('first_name', 20);
             $table->string('last_name', 20);
             $table->string('phone');
+            
             $table->string('nickname')->nullable();
             $table->string('display_name')->nullable();
             $table->unsignedTinyInteger('gender');

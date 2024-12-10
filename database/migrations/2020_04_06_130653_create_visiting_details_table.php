@@ -22,6 +22,7 @@ return new class extends Migration
             $table->dateTime('checkin_at')->nullable();
             $table->dateTime('checkout_at')->nullable();
             $table->unsignedTinyInteger('status');
+            $table->unsignedTinyInteger('accept_tc')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('employee_id');
             $table->unsignedBigInteger('visitor_id');

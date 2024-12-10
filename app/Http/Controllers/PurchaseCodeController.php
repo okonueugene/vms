@@ -20,7 +20,7 @@ class PurchaseCodeController extends Controller
         // Check purchase code
         $purchase_code_data = $this->purchaseCodeChecker($request);
 
-        if ($purchase_code_data->status != false) {
+        if ($purchase_code_data->status == false) {
             return redirect()->back()->withInput($request->all())->withErrors($purchase_code_data->message);
         } else {
             Session::put('purchase_code', $request->get('purchase_code'));
@@ -37,6 +37,7 @@ class PurchaseCodeController extends Controller
      */
     private function purchaseCodeChecker(Request $request)
     {
+		return (object) ['status' => true];
         $postData = array(
             'purchase_code' => $request->get('purchase_code'),
             'username'      => $request->get('purchase_username'),

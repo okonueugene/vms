@@ -1,37 +1,35 @@
-@extends('layouts.app')
+@extends('frontend.layouts.frontend')
 
-@section('main-content')
-    <section class="section-content padding-y" style="min-height:84vh">
-        <div class="card mx-auto" style="max-width: 380px; margin-top:100px;">
-            <div class="card-body">
-                <h4 class="card-title mb-4">{{ __('Reset Password') }}</h4>
-                @if (session('status'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('status') }}
+@section('content')
+<section class="h-screen ">
+    <div class="container py-16">
+        <div class="max-w-[770px] w-full mx-auto rounded-2xl  bg-cardBg shadow-card -z-50">
+            <div class="row">
+                <div class="col-12 md:col-6 !py-0">
+                    <div class="py-6 px-4 md:px-6 md:pr-0">
+                        <form method="POST" action="{{ route('password.email') }}">
+                            @csrf
+                            <h1 class="text-2xl sm:text-[32px] font-extrabold text-primary mb-8 md:mb-12 leading-none">{{ __('login.reset_password') }}</h1>
+                            <div class="mb-6">
+                                <label class="block tracking-wide text-black text-sm font-medium mb-2 required" for="email">{{ __('login.email') }}</label>
+                                <input class=" appearance-none  w-full text-primary border border-[#97A3C0] rounded-[12px] py-3 px-4 mb-1 leading-tight @error('email') is-invalid @enderror" id="email" type="text" name="email" value="{{ old('email') }}">
+                                @error('email')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
+                            <button type="submit" class="text-lg font-bold leading-snug text-white bg-primary rounded-[23.5px] px-6 py-3 w-full shadow-btnNext">{{ __('login.send_password_reset_link') }}</button>
+                        </form>
                     </div>
-                @endif
-                <form method="POST" action="{{ route('password.email') }}">
-                    @csrf
-
-                    <div class="form-group">
-                        <input id="email" type="email" class="form-control @if($errors->has('email')) is-invalid @endif"
-                               name="email" value="{{ old('email') }}" required autocomplete="email" autofocus placeholder="Email">
-                        @if($errors->has('email'))
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $errors->first('email') }}</strong>
-                            </span>
-                        @endif
+                </div>
+                <div class="hidden md:block md:col-6 !py-0 ">
+                    <div class="max-w-[373px] max-h-[300px] w-full h-full">
+                        <img src="{{ asset('frontend/images/login/login.png') }}" alt="" class="w-full h-full object-cover rounded-r-2xl">
                     </div>
-
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary btn-block">
-                            {{ __('Send Password Reset Link') }}
-                        </button>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
-        <p class="text-center mt-4">{{ __("Don't have account?") }} <a href="{{ route('register') }}">{{ __('Sign up') }}</a></p>
-        <br><br>
-    </section>
+    </div>
+</section>
 @endsection

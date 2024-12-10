@@ -19,4 +19,5 @@ return array (
   'users' => 'المستخدمين',
   'language' => 'لغة',
   'addons' => 'الإضافات',
+  'employee_report' => 'تقرير الموظف',
 );

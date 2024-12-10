@@ -1,7 +1,7 @@
 @component('mail::message')
 {{ __('# Hello') }} {{ Str::ucfirst($visitor['name']) }},<br>
 @component('mail::panel')
-   {{ __(' Your Request to Visit') }} {{ Str::ucfirst($visitor['name']) }}  is {{ trans('visitor_statuses.' . $visitor['status']), }}
+   {{ __(' Your Request to Visit') }} {{ Str::ucfirst($visitor['name']) }}  is {{ trans('visitor_statuses.' . $visitor['status']) }}
 @endcomponent
 <p>
     {!! setting('notify_templates') !!}
@@ -9,6 +9,7 @@
 <br>
 
 <p>Your QrCode Link here:</p><a href="{{ route('qrcode',$visitor['phone'])}}">Click</a>
+<img src="{{ asset('qrcode/'.$visitor['barcode']) }}" alt="">
 <br>
 
 {{ __('Thank you for using our application! ') }}{{ setting('site_name') }}<br>

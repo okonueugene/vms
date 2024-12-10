@@ -1,5 +1,7 @@
 @extends('admin.layouts.master')
-
+@section('css')
+    <link rel="stylesheet" href="{{ asset('css/id-card-print.css') }}">
+@endsection
 @section('main-content')
 
     <section class="section">
@@ -24,7 +26,7 @@
                                 <dt class="col-sm-4">{{ __('employee.name') }}</dt>
                                 <dd class="col-sm-8">{{ $employee->user->name }}</dd>
                                 <dt class="col-sm-4">{{ __('employee.phone') }}</dt>
-                                <dd class="col-sm-8">{{ $employee->user->phone }}</dd>
+                                <dd class="col-sm-8">{{ $employee->user->country_code }}{{ $employee->user->phone }}</dd>
                                 <dt class="col-sm-4">{{ __('employee.email') }}</dt>
                                 <dd class="col-sm-8">{{ $employee->user->email }}</dd>
                                 <dt class="col-sm-4">{{ __('employee.joining_date') }}</dt>
@@ -38,6 +40,14 @@
                                 <dt class="col-sm-4">{{ __('employee.status') }}</dt>
                                 <dd class="col-sm-8">{{ $employee->mystatus }}</dd>
                             </dl>
+
+                            <img src="{{ asset('qrcode/'.$employee->barcode) }}" alt="" width="150">
+                            <hr>
+                            <div class="btn-group my-2">
+                                <a href="{{ asset('qrcode/'.$employee->barcode) }}" class="btn btn-sm btn-outline-secondary" id="download" download="">
+                                    {{ __("employee.download") }}
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -102,6 +112,41 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-4 col-md-4 col-lg-4">
+			    	<div class="card">
+                        <div class="card-header">
+                            <a href="#" id="print" class="btn btn-icon icon-left btn-primary"><i class="fas fa-print"></i> {{ __('visitor.print_id_card') }}</a>
+                        </div>
+					    <div class="card-body ">
+                            <div class="img-cards" id="printidcard">
+                                <div class="id-card-holder">
+                                    <div class="id-card">
+                                        <div class="id-card-photo">
+                                            @if($employee->getFirstMediaUrl('employee'))
+                                                <img src="{{ asset($employee->getFirstMediaUrl('employee')) }}" alt="">
+                                            @else
+                                                <img src="{{ asset('images/'.setting('site_logo')) }}" alt="">
+                                            @endif
+                                        </div>
+
+                                        <h3>{{$employee->user->name}}</h3>
+                                        <h3>{{$employee->user->phone}}</h3>
+                                        <h3>{{$employee->user->email}}</h3>
+                                        <h3>{{$employee->date_of_joining}}</h3>
+                                        <h3>{{$employee->mygender}}</h3>
+
+                                        <img src="{{ asset('qrcode/'.$employee->barcode) }}" alt="" width="100">
+                                        <hr>
+                                        <span><strong>{{ setting('site_name') }} </strong></span><br>
+                                        <span class="text-small"><strong>{{ setting('site_address') }} </strong></span><br>
+                                        <span class="text-small">{{__('visitor.ph')}}: {{ setting('site_phone') }} | {{__('visitor.email')}}: {{ setting('site_email') }} </span><br>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+					    <!-- /.box-body -->
+					</div>
+				</div>
             </div>
         </div>
     </section>
@@ -117,5 +162,10 @@
     <script src="{{ asset('assets/modules/datatables/media/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('assets/modules/datatables.net-select-bs4/js/select.bootstrap4.min.js') }}"></script>
+
+    <script>
+        var idCardCss = "{{ asset('css/id-card-print.css') }}";
+    </script>
+
     <script src="{{ asset('js/employee/view.js') }}"></script>
 @endsection

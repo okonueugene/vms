@@ -2,37 +2,33 @@
 
 namespace App\Http\Services;
 
+use Google\Client;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 
 class PushNotificationService
 {
-    public function sendPushNotification($visitingDetails, $topicName)
+    public function sendPushNotification($visitingDetails)
     {
-        if (!empty($topicName)) {
-            $topic = env('FCM_TOPIC') . '_' . str_replace(['@', '.', '+'], ['_', '_', ''], $topicName);
-        } else {
-            $topic = env('FCM_TOPIC');
-        }
+     
 
-        $final = array(
-            'to' => '/topics/' . $topic,
-            'priority' => 'high',
-            'notification' => [
-                "title" => "New Visitor #" . $visitingDetails->visitor->name,
-                "body" => 'You have a new visitor named ' . $visitingDetails->visitor->name. ' The visitor phone number is ' . $visitingDetails->visitor->phone,
-                'sound' => 'Default',
-                'image' => $visitingDetails->images
-            ],
-        );
-        $url = 'https://fcm.googleapis.com/fcm/send';
+        $url = 'https://fcm.googleapis.com/v1/projects/' . setting('projectId') . '/messages:send';
 
-        $headers = array(
-            'Authorization: key=' . env('FCM_SECRET_KEY'),
+        $data = [
+            "message" => [
+                "notification" => [
+                    "title" => "New Visitor #" . $visitingDetails->visitor->name,
+                    "body"  => 'You have a new visitor named ' . $visitingDetails->visitor->name . ' The visitor phone number is ' . $visitingDetails->visitor->phone,
+                ]
+            ]
+        ];
+
+        $encodedData = json_encode($data);
+
+        $headers = [
+            'Authorization: Bearer ' . $this->getAccessToken(),
             'Content-Type: application/json'
-        );
+        ];
 
         $ch = curl_init();
 
@@ -41,12 +37,13 @@ class PushNotificationService
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($final));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $encodedData);
         $result = curl_exec($ch);
+        
         if ($result === FALSE) {
             die('Curl failed: ' . curl_error($ch));
         }
-      
+
         curl_close($ch);
         return $result;
     }
@@ -152,45 +149,49 @@ class PushNotificationService
 
     public function sendWebNotification($visitingDetails)
     {
-        $user_id = $visitingDetails->employee->user->id;
-        $url = 'https://fcm.googleapis.com/fcm/send';
-        $FcmToken = User::where('id',$user_id)->whereNotNull('web_token')->pluck('web_token')->all();
-        $serverKey = env('FCM_SECRET_KEY');
+        $user_id  = $visitingDetails->employee->user->id;
+        $FcmToken = User::where('id', $user_id)->whereNotNull('web_token')->pluck('web_token')->toArray();
+        $url      = 'https://fcm.googleapis.com/v1/projects/' . setting('projectId') . '/messages:send';
         $data = [
-            "registration_ids" => $FcmToken,
-            "notification" => [
-                "title" => "New Visitor #" . $visitingDetails->visitor->name,
-                "body" => 'You have a new visitor named ' . $visitingDetails->visitor->name. ' The visitor phone number is ' . $visitingDetails->visitor->phone,
-                'sound'        => 'default', // Optional
-                'icon'         => public_path('images/fav.png'),
+            "message" => [
+                "token"        => $FcmToken[0],
+                "notification" => [
+                    "title" => 'New Visitor #' . $visitingDetails->visitor->name,
+                    "body"  => 'You have a new visitor named ' . $visitingDetails->visitor->name . ' The visitor phone number is ' . $visitingDetails->visitor->phone,
+                ]
             ]
         ];
         $encodedData = json_encode($data);
-
         $headers = [
-            'Authorization:key=' . $serverKey,
-            'Content-Type: application/json',
+            'Authorization: Bearer ' . $this->getAccessToken(),
+            'Content-Type: application/json'
         ];
-
         $ch = curl_init();
-
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
-        // Disabling SSL Certificate support temporarly
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $encodedData);
-        // Execute post
         $result = curl_exec($ch);
         if ($result === FALSE) {
             die('Curl failed: ' . curl_error($ch));
         }
-        // Close connection
         curl_close($ch);
-        // FCM response
         return true;
+    }
+
+    public function getAccessToken()
+    {
+        $client = new Client();
+        $client->setAuthConfig(storage_path('app/firebase/service-account-file.json'));
+        $client->addScope('https://www.googleapis.com/auth/firebase.messaging');
+        $client->useApplicationDefaultCredentials();
+
+        $token = $client->fetchAccessTokenWithAssertion()['access_token'];
+
+        return $token;
     }
 }

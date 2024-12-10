@@ -30,7 +30,7 @@
             <div class="media align-items-center">
                 <div class="media-body">
                     <p class="small text-muted mb-0">{{__('Phone')}}</p>
-                    <p>{{$employee->user->phone}}</p>
+                    <p>{{$employee->user->country_code}}{{$employee->user->phone}}</p>
                 </div>
                 <i class="text-muted icon-sm fe-phone"></i>
             </div>

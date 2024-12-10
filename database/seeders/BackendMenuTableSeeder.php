@@ -1,7 +1,5 @@
 <?php
-
 namespace Database\Seeders;
-
 use App\Models\BackendMenu;
 use Illuminate\Database\Seeder;
 
@@ -17,7 +15,7 @@ class BackendMenuTableSeeder extends Seeder
 
         $parent = [
             'report'         => 9,
-            'administrators' => 13,
+            'administrators' => 14,
         ];
 
         $menus = [
@@ -61,7 +59,6 @@ class BackendMenuTableSeeder extends Seeder
                 'priority'  => 8600,
                 'status'    => 1,
             ],
-
             [
                 'name'      => 'visitors',
                 'link'      => 'visitors',
@@ -119,6 +116,14 @@ class BackendMenuTableSeeder extends Seeder
                 'status'    => 1,
             ],
             [
+                'name'      => 'employee_report',
+                'link'      => 'employee-report',
+                'icon'      => 'fas fa-list-alt',
+                'parent_id' => $parent['report'],
+                'priority'  => 74,
+                'status'    => 1,
+            ],
+            [
                 'name'      => 'administrators',
                 'link'      => '#',
                 'icon'      => 'fas fa-id-card ',
@@ -158,22 +163,13 @@ class BackendMenuTableSeeder extends Seeder
                 'priority'  => 2400,
                 'status'    => 1,
             ],
-
+          
             [
                 'name'      => 'addons',
                 'link'      => 'addons',
                 'icon'      => 'fa fa-crosshairs',
                 'parent_id' => $parent['administrators'],
                 'priority'  => 3000,
-                'status'    => 1,
-            ],
-            [
-
-                'name'      => 'casuals',
-                'link'      => 'casuals',
-                'icon'      => 'fas fa-user-tie',
-                'parent_id' => 0,
-                'priority'  => 8500,
                 'status'    => 1,
             ]
 

@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return array (
   'dashboard' => 'Dashboard',
   'profile' => 'Profile',
   'departments' => 'Departments',
@@ -20,4 +20,5 @@ return array(
   'language' => 'Language',
   'users' => 'Users',
   'addons' => 'Addons',
+  'employee_report' => 'Employee Report',
 );

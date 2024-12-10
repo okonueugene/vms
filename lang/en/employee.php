@@ -27,4 +27,5 @@ return array (
   'expected_date' => 'Expected Date',
   'expected_time' => 'Expected Time',
   'expected_Date' => 'Expected Date',
+  'download' => 'Download Qr',
 );

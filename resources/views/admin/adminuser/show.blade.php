@@ -4,7 +4,7 @@
 
 	<section class="section">
         <div class="section-header">
-            <h1>{{ __('administrator.Administrators') }}</h1>
+            <h1>{{ __('administrator.administrators') }}</h1>
             {{ Breadcrumbs::render('administrators/view') }}
         </div>
 
@@ -36,7 +36,7 @@
 			    					<p><b>{{ __('levels.email') }}: </b> {{ $user->email}}</p>
 			    				</div>
 			    				<div class="single-profile">
-			    					<p><b>{{ __('levels.phone') }}: </b> {{ $user->phone}}</p>
+			    					<p><b>{{ __('levels.phone') }}: </b> {{ $user->country_code}}{{ $user->phone}}</p>
 			    				</div>
 			    				<div class="single-profile">
 			    					<p><b>{{ __('levels.username') }}: </b> {{ $user->username}}</p>

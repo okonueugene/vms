@@ -16,7 +16,7 @@ class AddonController extends BackendController
     public function __construct()
     {
         parent::__construct();
-        $this->data['siteTitle'] = 'Addons';
+        $this->data['sitetitle'] = 'Addons';
         $this->addon_service     = new AddonServices();
 
         $this->middleware(['permission:addons_delete'])->only('destroy');

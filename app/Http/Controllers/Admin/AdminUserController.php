@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\UserStatus;
-use App\Http\Controllers\BackendController;
-use App\Http\Requests\AdminUserRequest;
 use App\Models\User;
+use App\Enums\UserRole;
+use App\Enums\UserStatus;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
 use Yajra\Datatables\Datatables;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\AdminUserRequest;
+use App\Http\Controllers\BackendController;
 
 class AdminUserController extends BackendController
 {
@@ -52,15 +53,17 @@ class AdminUserController extends BackendController
      */
     public function store(AdminUserRequest $request)
     {
-        $user             = new User;
-        $user->first_name = $request->first_name;
-        $user->last_name  = $request->last_name;
-        $user->email      = $request->email;
-        $user->username   = $request->username ?? $this->username($request->email);
-        $user->password   = Hash::make(request('password'));
-        $user->phone      = $request->phone;
-        $user->address    = $request->address;
-        $user->status     = $request->status;
+        $user                    = new User;
+        $user->first_name        = $request->first_name;
+        $user->last_name         = $request->last_name;
+        $user->email             = $request->email;
+        $user->country_code      = $request->country_code;
+        $user->country_code_name = $request->country_code_name;
+        $user->username          = $request->username ?? $this->username($request->email);
+        $user->password          = Hash::make(request('password'));
+        $user->phone             = $request->phone;
+        $user->address           = $request->address;
+        $user->status            = $request->status;
         $user->save();
 
         if (request()->file('image')) {
@@ -120,8 +123,10 @@ class AdminUserController extends BackendController
                 $user->password = Hash::make(request('password'));
             }
 
-            $user->phone   = $request->phone;
-            $user->address = $request->address;
+            $user->phone             = $request->phone;
+            $user->country_code      = $request->country_code;
+            $user->country_code_name = $request->country_code_name;
+            $user->address           = $request->address;
 
             if ($user->id == 1) {
                 $user->status = $request->status;
@@ -130,7 +135,7 @@ class AdminUserController extends BackendController
             } else {
                 $user->status = $request->status;
                 $role = Role::find($request->role_id);
-                $user->assignRole($role->name);
+                $user->syncRoles([$role->name]);
             }
             $user->save();
 
@@ -160,9 +165,14 @@ class AdminUserController extends BackendController
 
     public function getAdminUsers()
     {
-        $role           = Role::find(1);
-        $roleTow        = Role::find(3);
-        $users     = User::role([$role->name,$roleTow->name])->latest()->get();
+        
+
+        $role = Role::find(UserRole::EMPLOYEE);
+
+        $users = User::whereDoesntHave('roles', function ($query) use ($role) {
+            $query->where('name', $role->name);
+        })->get();
+        
         $userArray = [];
 
         $i = 1;

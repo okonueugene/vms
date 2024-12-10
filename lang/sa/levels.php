@@ -52,4 +52,6 @@ return array (
   'url' => 'URL',
   'user' => 'المستعمل',
   'username' => 'اسم المستخدم',
+  'service_account_private_key_file' => 'ملف المفتاح الخاص لحساب الخدمة',
+  'json'                             => 'JSON',
 );

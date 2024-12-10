@@ -82,6 +82,8 @@ class PreRegisterService
         $input['last_name']                  = $request->input('last_name');
         $input['email']                      = $request->input('email');
         $input['phone']                      = preg_replace("/[^0-9]/", "", $request->input('phone'));
+        $input['country_code']               = $request->input('country_code');
+        $input['country_code_name']          = $request->input('country_code_name');
         $input['national_identification_no'] = $request->input('national_identification_no');
         $input['gender']                     = $request->input('gender');
         $input['address']                    = $request->input('address');
@@ -136,6 +138,8 @@ class PreRegisterService
         $input['last_name']                  = $request->input('last_name');
         $input['email']                      = $request->input('email');
         $input['phone']                      = preg_replace("/[^0-9]/", "", $request->input('phone'));
+        $input['country_code']               = $request->input('country_code');
+        $input['country_code_name']          = $request->input('country_code_name');
         $input['gender']                     = $request->input('gender');
         $input['address']                    = $request->input('address');
         $input['employee_id']                = $request->input('employee_id');

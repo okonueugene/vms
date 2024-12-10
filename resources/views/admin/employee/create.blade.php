@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="{{ asset('assets/modules/bootstrap-social/bootstrap-social.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/modules/summernote/summernote-bs4.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/modules/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/lib/inttelinput/css/intlTelInput.css') }}">
 @endsection
 
 @section('main-content')
@@ -63,15 +64,19 @@
                                     </div>
                                     <div class="form-group col">
                                         <label>{{ __('employee.phone') }}</label> <span class="text-danger">*</span>
-                                        <input type="text" name="phone"
-                                            class="form-control @error('phone') is-invalid @enderror"
-                                            value="{{ old('phone') }}">
+                                        <input type="text" id="number" name="phone" 
+                                               class="form-control @error('phone') is-invalid @enderror" 
+                                               value="{{ old('phone') }}">
                                         @error('phone')
                                             <div class="invalid-feedback">
                                                 {{ $message }}
                                             </div>
                                         @enderror
                                     </div>
+                                    
+                                    <input type="hidden" id="code" name="country_code" value="1">
+                                    <input type="hidden" id="code_name" name="country_code_name" value="us">
+                            
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col">
@@ -233,4 +238,9 @@
     <script src="{{ asset('assets/modules/summernote/summernote-bs4.js') }}"></script>
     <script src="{{ asset('assets/modules/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
     <script src="{{ asset('js/employee/create.js') }}"></script>
+    <script defer src="{{ asset('assets/lib/inttelinput/js/intlTelInput-jquery.js') }}"></script>
+    <script defer src="{{ asset('assets/lib/inttelinput/js/intlTelInput.js') }}"></script>
+    <script defer src="{{ asset('assets/lib/inttelinput/js/utils.js') }}"></script>
+    <script defer src="{{ asset('assets/lib/inttelinput/js/data.js') }}"></script>
+    <script defer src="{{ asset('assets/lib/inttelinput/js/init.js') }}"></script>
 @endsection

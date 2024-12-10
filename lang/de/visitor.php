@@ -17,7 +17,7 @@ return array (
   'host' => 'Gastgeber',
   'id' => 'ICH WÜRDE',
   'image' => 'Bild',
-  'last_name' => 'Last Name',
+  'last_name' => 'Achternaam',
   'national_identification_no' => 'Nationale Identifikationsnummer',
   'ph' => 'Ph',
   'phone' => 'Telefon',

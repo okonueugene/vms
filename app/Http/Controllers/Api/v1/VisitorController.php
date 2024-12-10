@@ -16,6 +16,7 @@ use App\Http\Requests\VisitorUpdateRequest;
 use App\Http\Services\Visitor\VisitorService;
 use App\Http\Resources\v1\SingleVisitorResource;
 
+
 class VisitorController extends Controller
 {
     use ApiResponse;
@@ -26,7 +27,7 @@ class VisitorController extends Controller
     public function __construct(VisitorService $visitorService)
     {
         $this->data['sitetitle'] = 'Visitors';
-        $this->middleware('auth:api')->except('checkin', 'checkinCheck', 'checkout', 'findVisitor');
+        $this->middleware('auth:api')->except('checkin','checkinCheck', 'checkout', 'findVisitor');
         $this->middleware(['permission:visitors'])->only('index');
         $this->middleware(['permission:visitors_create'])->only('create', 'store');
         $this->middleware(['permission:visitors_edit'])->only('edit', 'update');
@@ -75,17 +76,17 @@ class VisitorController extends Controller
             $visitor['email']                      = blank($visitingDetails->visitor->email) ? "" : $visitingDetails->visitor->email;
             $visitor['reg_no']                     = $visitingDetails->reg_no;
             $visitor['phone']                      = $visitingDetails->visitor->phone;
+            $visitor['country_code']               = $visitingDetails->visitor->country_code;
+            $visitor['country_code_name']          = $visitingDetails->visitor->country_code_name;
             $visitor['image']                      = $visitingDetails->images;
             $visitor['gender']                     = $visitingDetails->visitor->gender;
             $visitor['gender_name']                = trans('genders.' . $visitingDetails->visitor->gender);
             $visitor['company_name']               = blank($visitingDetails->company_name) ? "" : $visitingDetails->company_name;
             $visitor['national_identification_no'] = $visitingDetails->visitor->national_identification_no;
             $visitor['address']                    = blank($visitingDetails->visitor->address) ? "" : $visitingDetails->visitor->address;
-            $visitor['vehicle_registration_no']    = blank($visitingDetails->vehicle_registration_no) ? "" : $visitingDetails->vehicle_registration_no;
-            $visitor['belongings']                 = blank($visitingDetails->belongings) ? "" : $visitingDetails->belongings;
             $visitor['employee']                   = $visitingDetails->employee->name;
             $visitor['purpose']                    = $visitingDetails->purpose;
-            $visitor['date']                         = blank($visitingDetails->created_at) ? "" : date('Y-m-d', strtotime($visitingDetails->created_at));
+            $visitor['date']                       = blank($visitingDetails->created_at) ? "" : date('Y-m-d', strtotime($visitingDetails->created_at));
             $visitor['checkin_at']                 = blank($visitingDetails->checkin_at) ? "" : date('h:i A', strtotime($visitingDetails->checkin_at));
             $visitor['checkout_at']                = blank($visitingDetails->checkout_at) ? "" : date('h:i A', strtotime($visitingDetails->checkout_at));
             $visitor['raw_checkin_at']             = $visitingDetails->checkin_at;
@@ -183,15 +184,15 @@ class VisitorController extends Controller
         if ($visitingDetails) {
             $i = 1;
             foreach ($visitingDetails as $visitingDetail) {
-                $visitor[$i]['id']      = $visitingDetail->id;
+                $visitor[$i]['id']          = $visitingDetail->id;
                 $visitor[$i]['name']        = $visitingDetail->visitor->name;
                 $visitor[$i]['reg_no']      = $visitingDetail->reg_no;
                 $visitor[$i]['image']       = $visitingDetail->images;
                 $visitor[$i]['status']      = $visitingDetail->status;
                 $visitor[$i]['status_name'] = trans('visitor_statuses.' . $visitingDetail->status);
-                $visitor[$i]['visitor_id'] = $visitingDetail->visitor->id;
-                $visitor[$i]['checkin_at']                 = blank($visitingDetail->checkin_at) ? "" : date('h:i A', strtotime($visitingDetail->checkin_at));
-                $visitor[$i]['checkout_at']                = blank($visitingDetail->checkout_at) ? "" : date('h:i A', strtotime($visitingDetail->checkout_at));
+                $visitor[$i]['visitor_id']  = $visitingDetail->visitor->id;
+                $visitor[$i]['checkin_at']  = blank($visitingDetail->checkin_at) ? "" : date('h:i A', strtotime($visitingDetail->checkin_at));
+                $visitor[$i]['checkout_at'] = blank($visitingDetail->checkout_at) ? "" : date('h:i A', strtotime($visitingDetail->checkout_at));
 
                 $i++;
             }
@@ -222,7 +223,7 @@ class VisitorController extends Controller
         $validator = Validator::make($request->all(), $validator->rules());
 
         if (!$validator->fails()) {
-            return $this->successResponse(['status' => 200, 'message' => 'true', 'visitor' => (object)[]]);
+                return $this->successResponse(['status' => 200, 'message' => 'true', 'visitor' => (object)[]]);
         } else {
             return $this->errorResponse(['status' => 422, 'message' => $validator->errors(), 'visitor' => (object)[]]);
         }
@@ -242,17 +243,16 @@ class VisitorController extends Controller
             }
 
             if ($visitingDetails) {
-                $visitor['name'] = $visitingDetails->visitor->name;
-                $visitor['phone'] = $visitingDetails->visitor->phone;
-                $visitor['reg_no'] = $visitingDetails->reg_no;
-                $visitor['belongings'] = $visitingDetails->belongings;
-                $visitor['purpose'] = $visitingDetails->purpose;
-                $visitor['vehicle_registration_no'] = $visitingDetails->vehicle_registration_no;
-                $visitor['image'] = $visitingDetails->images;
-                $visitor['employee'] = $visitingDetails->employee->first_name;
-                $visitor['site_name'] = setting('site_name');
-                $visitor['site_email'] = setting('site_email');
-                $visitor['site_address'] = setting('site_address');
+                $visitor['name']              = $visitingDetails->visitor->name;
+                $visitor['phone']             = $visitingDetails->visitor->phone;
+                $visitor['country_code']      = $visitingDetails->visitor->country_code;
+                $visitor['country_code_name'] = $visitingDetails->visitor->country_code_name;
+                $visitor['reg_no']            = $visitingDetails->reg_no;
+                $visitor['image']             = $visitingDetails->images;
+                $visitor['employee']          = $visitingDetails->employee->name;
+                $visitor['site_name']         = setting('site_name');
+                $visitor['site_email']        = setting('site_email');
+                $visitor['site_address']      = setting('site_address');
 
                 $visitingDetails = new VisitorResource($visitor);
                 return $this->successResponse(['status' => 200, 'message' => 'Success', 'visitor' => $visitingDetails]);
@@ -264,15 +264,7 @@ class VisitorController extends Controller
 
     public function checkout($id)
     {
-        // $visitingDetail = VisitingDetails::where('reg_no', $id)->first();
-        $visitingDetail = VisitingDetails::where('reg_no', $id)
-        ->orWhereHas('visitor', function ($query) use ($id) {
-            $query->where('national_identification_no', $id);
-        })
-        ->whereNull('checkout_at')
-        ->latest('created_at')
-        ->first();
-
+        $visitingDetail = VisitingDetails::where('reg_no', $id)->first();
         if ($visitingDetail) {
             if (blank($visitingDetail->checkout_at)) {
                 if (!blank($visitingDetail->checkin_at)) {
@@ -328,6 +320,8 @@ class VisitorController extends Controller
             $visitor['name'] = $visitor->first_name;
             $visitor['email'] = $visitor->email;
             $visitor['phone'] = $visitor->phone;
+            $visitor['country_code'] = $visitor->country_code;
+            $visitor['country_code_name'] = $visitor->country_code_name;
             $visitor['image'] = $visitor->images;
             $visitor['gender'] = $visitor->gender;
             $visitor['national_identification_no'] = $visitor->national_identification_no;

@@ -24,14 +24,18 @@ class MeResource extends JsonResource
     public function toArray($request)
     {
         return [
-                    'id'         => $this->id,
-                    'name'       => $this->name,
-                    'email'      => $this->email,
-                    'username'   => $this->username,
-                    'phone'      => $this->phone,
-                    'address'    => blank($this->address) ? "" : $this->address,
-                    'department' => blank($this->department) ? "" : $this->department->name,
-                    'image'      => $this->images,
+            'id'                => $this->id,
+            'first_name'        => $this->first_name,
+            'last_name'         => $this->last_name,
+            'name'              => $this->name,
+            'email'             => $this->email,
+            'username'          => $this->username,
+            'phone'             => $this->phone,
+            'country_code'      => $this->country_code,
+            'country_code_name' => $this->country_code_name,
+            'address'           => blank($this->address) ? "" : $this->address,
+            'department'        => blank($this->department) ? "" : $this->department->name,
+            'image'             => $this->images,
         ];
     }
 }

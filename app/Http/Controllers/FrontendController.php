@@ -2,14 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use jwt;
-use App\Models\VisitingDetails;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Services\JwtTokenService;
 use App\Models\Visitor;
-use Illuminate\Support\Facades\Request;
-use Gloudemans\Shoppingcart\Facades\Cart;
-use App\Notifications\VisitorConfirmation;
 use App\Models\User;
 
 class FrontendController extends Controller
@@ -46,8 +41,17 @@ class FrontendController extends Controller
 
     public function qrcode($number)
     {
-        $visitor = Visitor::select('barcode')->where('phone',$number)->first();
+        $visitor = Visitor::select('barcode')->where('phone', $number)->first();
 
-        return view('frontend.check-in.qrcode',compact('visitor'));
+        return view('frontend.check-in.qrcode', compact('visitor'));
+    }
+
+    public function termsConditions()
+    {
+        if (setting('terms_visibility_status')) {
+            return view('frontend.termscondition');
+        }
+
+        return redirect()->route('/');
     }
 }

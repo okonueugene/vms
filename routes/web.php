@@ -24,9 +24,12 @@ use App\Http\Controllers\Admin\PreRegisterController;
 use App\Http\Controllers\Admin\DesignationsController;
 use App\Http\Controllers\Admin\LocalizationController;
 use App\Http\Controllers\Admin\VisitorReportController;
+use App\Http\Controllers\Admin\EmployeeReportController;
 use App\Http\Controllers\Admin\WebNotificationController;
 use App\Http\Controllers\Admin\AttendanceReportController;
 use App\Http\Controllers\Admin\PreRegistersReportController;
+
+Auth::routes();
 
 Route::group(['middleware' => ['installed']], function () {
     Auth::routes(['verify' => false]);
@@ -116,6 +119,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'installed', 'backen
     Route::get('attendance-report', [AttendanceReportController::class, 'index'])->name('attendance-report.index');
     Route::post('attendance-report', [AttendanceReportController::class, 'index'])->name('attendance-report.post');
 
+    Route::get('employee-report', [EmployeeReportController::class, 'index'])->name('employee-report.index');
+    Route::post('employee-report', [EmployeeReportController::class, 'index'])->name('employee-report.post');
+
+
     Route::post('admin-attendance/clockin', [AttendanceController::class, 'clockIn'])->name('attendance.clockin');
     Route::post('admin-attendance/clockout', [AttendanceController::class, 'clockOut'])->name('attendance.clockout');
 
@@ -177,6 +184,9 @@ Route::group(['middleware' => ['installed']], function () {
         Route::get('/check-in/pre-registered', [CheckInController::class, 'pre_registered'])->name('check-in.pre.registered');
         Route::post('/check-in/pre-registered', [CheckInController::class, 'find_pre_visitor'])->name('check-in.find.pre.visitor');
 
+        /**
+         * Scan Qr Code
+         */
         Route::get('check-in/visitor-details/{visitorPhone}', [CheckInController::class, 'visitorDetails'])->name('checkin.visitor-details');
         Route::get('check-in/pre-registered/visitor-details/{visitorPhone}', [CheckInController::class, 'preVisitorDetails'])->name('checkin.pre-visitor-details');
     });

@@ -6,39 +6,34 @@ use Carbon\Carbon;
 use App\Enums\Status;
 use App\Models\Visitor;
 use App\Models\Employee;
+use App\Models\Attendance;
 use App\Models\PreRegister;
 use Illuminate\Support\Str;
 use App\Enums\VisitorStatus;
 use Illuminate\Http\Request;
 use App\Models\VisitingDetails;
 use Illuminate\Validation\Rule;
-use App\Http\Services\SmsService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use App\Http\Services\JwtTokenService;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Notifications\EmployeConfirmation;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use App\Notifications\SendVisitorToEmployee;
-use Illuminate\Support\Facades\Notification;
 use App\Http\Services\PushNotificationService;
-use NotificationChannels\Twilio\TwilioChannel;
-use App\Notifications\SendInvitationToVisitors;
+use Illuminate\Support\Facades\Log;
 use Spatie\ImageOptimizer\OptimizerChainFactory;
 
 class CheckInController extends Controller
 {
     public $disable;
 
-    public function __construct() {}
+    function __construct() {}
 
     public function index()
     {
         session()->forget('visitor');
         session()->forget('is_returned');
-        // return view('frontend.check-in.dashboard');
         return view('frontend.check-in.home-page');
     }
     public function scanQr()
@@ -46,12 +41,7 @@ class CheckInController extends Controller
         return view('frontend.check-in.cameraPreview');
     }
 
-    /**
-     * Show the step 1 Form for creating a new product.
-     *
-     * @param Request $request
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
+
     public function createStepOne(Request $request)
     {
         $employees = Employee::where('status', Status::ACTIVE)->get();
@@ -64,12 +54,9 @@ class CheckInController extends Controller
         if (!blank($visitor) && isset($visitor->id)) {
             $role = auth()->user() ? auth()->user()->myrole : 0;
             if (session()->has('pre-register')) {
-                // $visitingDetails = VisitingDetails::where('visitor_id', $visitor->id)->latest()->first();
                 $visitingDetails = PreRegister::where('visitor_id', $visitor->id)->latest()->first();
                 if (!blank($visitingDetails)) {
-                    // $company_name = $visitingDetails->company_name;
                     $employee_id = $visitingDetails->employee_id;
-                    // $purpose = $visitingDetails->purpose;
                 }
             } else {
                 $visitingDetails = VisitingDetails::where('visitor_id', $visitor->id)->latest()->first();
@@ -87,94 +74,121 @@ class CheckInController extends Controller
         return view('frontend.check-in.step-one', compact('employees', 'visitor', 'company_name', 'disable', 'employee_id', 'purpose'));
     }
 
-    /**
-     * Post Request to store step1 info in session
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
+
     public function postCreateStepOne(Request $request)
     {
-        if ($request->session()->get('is_returned') == false || empty($request->session()->get('is_returned')) && $request->get('returning') != '1') {
-
+        if ($request->session()->get('is_returned') == false || empty($request->session()->get('is_returned'))) {
             $emailValidation = '';
+
             if (!blank($request->get('email'))) {
                 $emailValidation = $request->validate([
-                    'email'                      => 'unique:visitors,email',
+                    'email' => 'unique:visitors,email',
                 ]);
             }
-            $validatedData = $request->validate([
-                'first_name'                 => 'required',
-                'last_name'                  => 'required',
-                'email'                      => 'nullable|email|unique:visitors,email',
-                'phone'                      => 'required|unique:visitors,phone',
-                'purpose'                    => 'required',
-                'employee_id'                => 'required|numeric',
-                'gender'                     => 'required|numeric',
-                'company_name'               => '',
-                'company_employee_id'        => '',
-                'national_identification_no' => 'required|unique:visitors,national_identification_no',
-                'belongings'                 => 'nullable|max:191',
-                'vehicle_registration_no'    => 'nullable|max:191',
-                'is_group_enabled'           => '',
-                'address'                    => '',
-                'oldVisitor'                 => '',
-            ]);
+
+            if (setting('terms_visibility_status')) {
+                $validatedData = $request->validate([
+                    'first_name'                 => 'required',
+                    'last_name'                  => 'required',
+                    'phone'                      => 'required|unique:visitors,phone',
+                    'country_code'               => '',
+                    'country_code_name'          => '',
+                    'purpose'                    => 'required',
+                    'employee_id'                => 'required|numeric',
+                    'gender'                     => 'required|numeric',
+                    'company_name'               => '',
+                    'company_employee_id'        => '',
+                    'national_identification_no' => 'required|unique:visitors,national_identification_no',
+                    'is_group_enabled'           => '',
+                    'address'                    => '',
+                    'oldVisitor'                 => '',
+                    'accept_tc'                  => 'accepted',
+                ]);
+            } else {
+                $validatedData = $request->validate([
+                    'first_name'                 => 'required',
+                    'last_name'                  => 'required',
+                    'phone'                      => 'required|unique:visitors,phone',
+                    'country_code'               => '',
+                    'country_code_name'          => '',
+                    'purpose'                    => 'required',
+                    'employee_id'                => 'required|numeric',
+                    'gender'                     => 'required|numeric',
+                    'company_name'               => '',
+                    'company_employee_id'        => '',
+                    'national_identification_no' => 'required|unique:visitors,national_identification_no',
+                    'is_group_enabled'           => '',
+                    'address'                    => '',
+                    'oldVisitor'                 => '',
+                ]);
+            }
+
+
             if (!blank($emailValidation)) {
                 $validatedData = array_merge($validatedData, $emailValidation);
             }
         } else {
-            $visitor = Visitor::where('email', $request->get('email'))
-                ->orWhere('phone', $request->get('phone'))
-                ->orWhere('national_identification_no', $request->get('national_identification_no'))
+            $visitor = Visitor::where('email', $request->get('email') == null ? '' : $request->get('email'))
+                ->orWhere('phone', $request->get('phone') == null ? '' : $request->get('phone'))
+                ->orWhere('national_identification_no', $request->get('national_identification_no') == null ? '' : $request->get('national_identification_no'))
                 ->first();
-
             $national_identification_no = "";
             if ($visitor) {
                 $email = blank($request->get('email')) ? '' : ['email', 'string', 'unique:visitors,email,' . $visitor->id];
                 $phone = ['required', 'string', Rule::unique("visitors", "phone")->ignore($visitor)];
+                $national_identification_no = ['required',  'string', 'unique:visitors,national_identification_no,' . $visitor->id];
             } else {
-                $email = blank($request->get('email')) ? '' : ['email', 'string', 'unique:visitors,email'];
-                $phone = ['required',  'string', 'unique:visitors,phone'];
+                $email                      = blank($request->get('email')) ? '' : ['email', 'string', 'unique:visitors,email'];
+                $phone                      = [];
                 $national_identification_no = ['required',  'string', 'unique:visitors,national_identification_no'];
             }
 
-            $validatedData = $request->validate([
-                'first_name'                 => 'required',
-                'last_name'                  => 'required',
-                'email'                      => $email,
-                'phone'                      => $phone,
-                'purpose'                    => 'required',
-                'employee_id'                => 'required|numeric',
-                'gender'                     => 'required|numeric',
-                'company_name'               => '',
-                'company_employee_id'        => '',
-                'national_identification_no' => $national_identification_no,
-                'belongings'                 => 'nullable|max:191',
-                'vehicle_registration_no'    => 'nullable|max:191',
-                'is_group_enabled'           => '',
-                'address'                    => '',
-                'oldVisitor'                 => '',
+            if (setting('terms_visibility_status')) {
+                $validatedData = $request->validate([
+                    'first_name'                 => 'required',
+                    'last_name'                  => 'required',
+                    'email'                      => $email,
+                    'phone'                      => $phone,
+                    'country_code'               => '',
+                    'country_code_name'          => '',
+                    'purpose'                    => 'required',
+                    'employee_id'                => 'required|numeric',
+                    'gender'                     => 'required|numeric',
+                    'company_name'               => '',
+                    'company_employee_id'        => '',
+                    'national_identification_no' => $national_identification_no,
+                    'is_group_enabled'           => '',
+                    'address'                    => '',
+                    'oldVisitor'                 => '',
+                    'accept_tc'                  => 'accepted',
 
-            ]);
+                ]);
+            } else {
+                $validatedData = $request->validate([
+                    'first_name'                 => 'required',
+                    'last_name'                  => 'required',
+                    'email'                      => $email,
+                    'phone'                      => $phone,
+                    'country_code'               => '',
+                    'country_code_name'          => '',
+                    'purpose'                    => 'required',
+                    'employee_id'                => 'required|numeric',
+                    'gender'                     => 'required|numeric',
+                    'company_name'               => '',
+                    'company_employee_id'        => '',
+                    'national_identification_no' => $national_identification_no,
+                    'is_group_enabled'           => '',
+                    'address'                    => '',
+                    'oldVisitor'                 => '',
+
+                ]);
+            }
         }
-
-        $validatedData['belongings'] = $request->get('belongings') ?? null;
-        $validatedData['vehicle_registration_no'] = $request->get('vehicle_registration_no') ?? null;
-
-
-
         $request->session()->put('visitor', $validatedData);
-
         return redirect()->route('check-in.step-two');
     }
 
-    /**
-     * Show the step 2 Form for creating a new product.
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function createStepTwo(Request $request)
     {
         $visitingDetails = $request->session()->get('visitor');
@@ -202,10 +216,7 @@ class CheckInController extends Controller
         }
     }
 
-    /**
-     * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
+
     public function store(Request $request)
     {
         $getVisitor = $request->session()->get('visitor');
@@ -252,22 +263,21 @@ class CheckInController extends Controller
             $reg_no = $data2 . $data1 . $data . '1';
         }
         if ($request->session()->get('is_returned') == false || empty($request->session()->get('is_returned'))) {
-
-            $input['first_name'] = $getVisitor['first_name'];
-            $input['last_name'] = $getVisitor['last_name'];
-            $input['email'] = isset($getVisitor['email']) ? $getVisitor['email'] : "";
-            $input['phone'] = preg_replace("/[^0-9]/", "", $getVisitor['phone']);
-            $input['gender'] = $getVisitor['gender'];
-            $input['address'] = $getVisitor['address'];
-            $input['belongings'] = $getVisitor['belongings'];
-            $input['vehicle_registration_no'] = $getVisitor['vehicle_registration_no'];
-            $input['national_identification_no'] = $getVisitor['national_identification_no'];
-            $input['is_pre_register'] = false;
-            $input['status'] = Status::ACTIVE;
-            $input['creator_id'] = 1;
-            $input['creator_type'] = 'App\Models\User';
-            $input['editor_type'] = 'App\Models\User';
-            $input['editor_id'] = 1;
+            $input['first_name']                 = $getVisitor['first_name'];
+            $input['last_name']                  = $getVisitor['last_name'];
+            $input['email']                      = isset($getVisitor['email']) ? $getVisitor['email'] : "";
+            $input['phone']                      = preg_replace("/[^0-9]/", "", $getVisitor['phone']);
+            $input['country_code']               = $getVisitor['country_code'];
+            $input['country_code_name']          = $getVisitor['country_code_name'];
+            $input['gender']                     = $getVisitor['gender'];
+            $input['address']                    = $getVisitor['address'];
+            $input['national_identification_no'] = $getVisitor['national_identification_no'] ? $getVisitor['national_identification_no'] : "";
+            $input['is_pre_register']            = false;
+            $input['status']                     = Status::ACTIVE;
+            $input['creator_id']                 = 1;
+            $input['creator_type']               = 'App\Models\User';
+            $input['editor_type']                = 'App\Models\User';
+            $input['editor_id']                  = 1;
             //Qrcode Genarate
             $file_name = 'qrcode-' . preg_replace("/[^0-9]/", "", $getVisitor['phone']) . '.png';
             $input['barcode']   = $file_name;
@@ -275,22 +285,17 @@ class CheckInController extends Controller
             QRCode::size(300)->format('png')->generate(route('checkin.visitor-details', preg_replace("/[^0-9]/", "", $getVisitor['phone'])), $file);
             $visitor = Visitor::create($input);
         } else {
-            $visitor = Visitor::where('national_identification_no', $getVisitor['national_identification_no'])->first();
-            $visitor->first_name = $getVisitor['first_name'];
-            $visitor->last_name = $getVisitor['last_name'];
-            $visitor->email = $getVisitor['email'];
-            $visitor->phone = $getVisitor['phone'];
-            $visitor->gender = $getVisitor['gender'];
-            $visitor->address = $getVisitor['address'];
-            $visitor->is_pre_register = false;
+            $visitor                             = Visitor::where('phone', $getVisitor['phone'])->first();
+            $visitor->first_name                 = $getVisitor['first_name'];
+            $visitor->last_name                  = $getVisitor['last_name'];
+            $visitor->email                      = $getVisitor['email'];
+            $visitor->national_identification_no = $getVisitor['national_identification_no'];
+            $visitor->gender                     = $getVisitor['gender'];
+            $visitor->address                    = $getVisitor['address'];
+            $visitor->is_pre_register            = false;
 
             $file_name = 'qrcode-' . preg_replace("/[^0-9]/", "", $getVisitor['phone']) . '.png';
             $visitor->barcode = $file_name;
-            //check if dir exists
-            $directory = public_path('qrcode');
-            if (!file_exists($directory)) {
-                mkdir($directory, 0755, true);
-            }
             $file = public_path('qrcode/' . $file_name);
             QRCode::size(300)->format('png')->generate(route('checkin.visitor-details', preg_replace("/[^0-9]/", "", $getVisitor['phone'])), $file);
             $visitor->save();
@@ -298,20 +303,18 @@ class CheckInController extends Controller
 
 
         if ($visitor) {
-            $visiting['reg_no'] = $reg_no;
-            $visiting['purpose'] = $getVisitor['purpose'];
+            $visiting['reg_no']       = $reg_no;
+            $visiting['purpose']      = $getVisitor['purpose'];
             $visiting['company_name'] = $getVisitor['company_name'];
-            $visiting['employee_id'] = $getVisitor['employee_id'];
-            $visiting['belongings'] = $getVisitor['belongings'];
-            $visiting['vehicle_registration_no'] = $getVisitor['vehicle_registration_no'];
-            $visiting['visitor_id'] = $visitor->id;
-            $visiting['status'] = VisitorStatus::PENDDING;
-            $visiting['user_id'] = $getVisitor['employee_id'];
-            $visiting['creator_id'] = 1;
+            $visiting['employee_id']  = $getVisitor['employee_id'];
+            $visiting['visitor_id']   = $visitor->id;
+            $visiting['status']       = VisitorStatus::PENDDING;
+            $visiting['user_id']      = $getVisitor['employee_id'];
+            $visiting['creator_id']   = 1;
             $visiting['creator_type'] = 'App\Models\User';
-            $visiting['editor_type'] = 'App\Models\User';
-            $visiting['editor_id'] = 1;
-            $visitingDetails = VisitingDetails::create($visiting);
+            $visiting['editor_type']  = 'App\Models\User';
+            $visiting['editor_id']    = 1;
+            $visitingDetails          = VisitingDetails::create($visiting);
             if ($imageName) {
                 $visitingDetails->addMedia($imageName)->toMediaCollection('visitor');
                 File::delete($imageName);
@@ -322,20 +325,15 @@ class CheckInController extends Controller
                 $token = app(JwtTokenService::class)->jwtToken($visitingDetails);
                 $visitingDetails->employee->user->notify(new EmployeConfirmation($visitingDetails, $token));
             } catch (\Exception $e) {
+                Log::info($e->getMessage());
             }
 
             try {
                 app(PushNotificationService::class)->sendWebNotification($visitingDetails);
             } catch (\Exception $exception) {
-            }
-
-            try {
-                app(PushNotificationService::class)->sendPushNotification($visitingDetails, $visitingDetails->employee->email);
-            } catch (\Exception $exception) {
+                Log::info($exception->getMessage());
             }
         }
-
-
         return redirect()->route('check-in.show', $visitingDetails->id);
     }
 
@@ -546,31 +544,55 @@ class CheckInController extends Controller
 
     public function visitorDetails($visitorPhone)
     {
-
-
         $visitor = Visitor::where('phone', $visitorPhone)->first();
 
-        $visitor_Detail = VisitingDetails::select('visitor_id')->where('visitor_id', $visitor->id)->where('disable', true)->orderBy('created_at', 'desc')->first();
+        if ($visitor === null) {
+            $employee = Employee::where('phone', $visitorPhone)->first();
 
-        //Check User block or not
-        if ($visitor_Detail) {
-            return redirect()->route('home')->with('error', 'This visitor has been Blocked!');
-        } else {
-            $visitorDetail = VisitingDetails::where('visitor_id', $visitor->id)->first();
-            if (!empty($visitor)) {
+            if ($employee) {
+                $checkout = Attendance::where(['user_id' => $employee->id, 'date' => date('Y-m-d')])->first();
 
-                if ($visitorDetail) {
+                if ($checkout === null) {
+                    $checkout               = new Attendance;
+                    $checkout->title        = 'Office';
+                    $checkout->checkin_time = date('g:i A');
+                    $checkout->date         = date('Y-m-d');
+                    $checkout->user_id      = $employee->id;
+                    $checkout->save();
 
-                    $visitor->image = $visitorDetail->images;
-                }
-                session()->put('visitor', $visitor);
-                if (@Auth::user()->id == 1) {
-                    $visitor->disable = false;
+                    return redirect()->route('home')->withSuccess("Check-in Successful!");
                 } else {
-                    $visitor->disable = true;
+                    $checkout->checkout_time     = date('g:i A');
+                    $checkout->save();
+
+                    return redirect()->route('home')->withSuccess("Check-out Successful!");
                 }
-                session()->put('is_returned', true);
-                return redirect()->route('check-in.step-one');
+            } else {
+                return redirect()->route('home')->withWarning('No record found!');
+            }
+        } else {
+            $visitor_Detail = VisitingDetails::select('visitor_id')->where('visitor_id', $visitor->id)->where('disable', true)->orderBy('created_at', 'desc')->first();
+
+            //Check User block or not
+            if ($visitor_Detail) {
+                return redirect()->route('home')->with('error', 'This visitor has been Blocked!');
+            } else {
+                $visitorDetail = VisitingDetails::where('visitor_id', $visitor->id)->first();
+                if (!empty($visitor)) {
+
+                    if ($visitorDetail) {
+
+                        $visitor->image = $visitorDetail->images;
+                    }
+                    session()->put('visitor', $visitor);
+                    if (@Auth::user()->id == 1) {
+                        $visitor->disable = false;
+                    } else {
+                        $visitor->disable = true;
+                    }
+                    session()->put('is_returned', true);
+                    return redirect()->route('check-in.step-one');
+                }
             }
         }
     }

@@ -10,7 +10,10 @@ class FrontEnd
     {
         if (setting('front_end_enable_disable') == 1) {
             return $next($request);
-        }else{
+        } else {
+            if (auth()->user()) {
+                return redirect()->route('admin.dashboard.index');
+            }
             return redirect()->route('login');
         }
     }

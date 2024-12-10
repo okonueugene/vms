@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\v1\Auth\MeController;
-use App\Http\Controllers\Api\v1\CasualsController;
 use App\Http\Controllers\Api\v1\SettingController;
 use App\Http\Controllers\Api\v1\VisitorController;
 use App\Http\Controllers\Api\v1\EmployeeController;
@@ -32,8 +31,6 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('employee', [EmployeeController::class, 'index']); //done
     Route::get('employee/{id}/show', [EmployeeController::class, 'show']); //done
 
-    //Casuals
-    Route::get('casual/{id}', [CasualsController::class, 'updateClockStatus']); //done
 
     //Pre-Register
     Route::get('preregister/', [PreRegisterController::class, 'index']); //done
@@ -61,7 +58,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('visitor/check-out/{id}', [VisitorController::class, 'checkout']);
     Route::post('visitor/check-in', [VisitorController::class, 'checkin']);
     Route::post('visitor/check-in/validator', [VisitorController::class, 'checkinCheck']);
-    Route::get('visitor/change-status/{id}/{status}', [VisitorController::class, 'changeStatus']);
+    Route::get('visitor/change-status/{id}/{status}',  [VisitorController::class, 'changeStatus']);
     Route::post('visitor/find_visitor/', [VisitorController::class, 'findVisitor']); //done
 
     Route::get('settings/', [SettingController::class, 'index']);

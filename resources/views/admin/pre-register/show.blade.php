@@ -36,7 +36,7 @@
 			    					<p><b>{{ __('pre_register.email_address') }}: </b> {{ $preregister->visitor->email}}</p>
 			    				</div>
 			    				<div class="single-profile">
-			    					<p><b>{{ __('pre_register.phone') }}: </b> {{ $preregister->visitor->phone}}</p>
+			    					<p><b>{{ __('pre_register.phone') }}: </b> {{ $preregister->visitor->country_code}}{{ $preregister->visitor->phone}}</p>
 			    				</div>
                                 <div class="single-profile">
 			    					<p><b>{{ __('pre_register.employee') }}: </b> {{ $preregister->employee->user->name}}</p>
@@ -48,10 +48,10 @@
 			    					<p><b>{{ __('pre_register.expected_time') }}: </b> {{ date('h:i A', strtotime($preregister->expected_time))}}</p>
 			    				</div>
                                 <div class="single-profile">
-                                    <p><b>{{ __('pre_register.address') }}: </b> {{ $preregister->visitor->address}}</p>
+                                    <p><b>{{ __('pre_register.address') }}: </b> {!! $preregister->visitor->address !!}</p>
                                 </div>
                                 <div class="single-full-profile">
-                                    <p><b>{{ __('pre_register.comment') }}: </b> {{ $preregister->comment}}</p>
+                                    <p><b>{{ __('pre_register.comment') }}: </b> {!! $preregister->comment !!}</p>
                                 </div>
                                 <div class="single-profile">
                                     <p><b>{{ __('levels.status') }}: </b> {{ $preregister->visitor->my_status}}</p>
@@ -60,10 +60,10 @@
 							@if (setting('whatsapp_message'))
 								<div class="float-right">
 									<a id=waButton href="https://wa.me/{{$preregister->visitor->phone}}?text={!! strip_tags(setting('whatsapp_decline_message')) !!}" target="_blank" class="btn btn-danger">Reject WhatsApp</a>
-								</div> 
+								</div>
 								<div class="float-right">
-									<a id=waButton href="https://wa.me/{{$preregister->visitor->phone}}?text={!! strip_tags(setting('whatsapp_accept_message')) !!}{{ route('qrcode',$preregister->visitor->phone) }}" target="_blank" class="btn btn-success mr-1">Send WhatsApp</a>
-								</div> 
+									<a id=waButton href="https://wa.me/{{$preregister->visitor->phone}}?text={!! strip_tags(setting('whatsapp_accept_message')) !!} {{ route('qrcode',$preregister->visitor->phone) }}" target="_blank" class="btn btn-success mr-1">Send WhatsApp</a>
+								</div>
 							@endif
 			    		</div>
 			    	</div>

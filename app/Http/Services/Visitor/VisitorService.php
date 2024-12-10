@@ -20,20 +20,21 @@ use Spatie\ImageOptimizer\OptimizerChainFactory;
 
 class VisitorService
 {
+
     public function all()
     {
         if (auth()->user()->getrole->name == 'Employee') {
-            return VisitingDetails::with('visitor', 'employee')->where(['employee_id' => auth()->user()->employee->id])->orderBy('id', 'desc')->get();
+            return VisitingDetails::with('visitor','employee')->where(['employee_id' => auth()->user()->employee->id])->orderBy('id', 'desc')->get();
         } else {
-            return VisitingDetails::with('visitor', 'employee')->orderBy('id', 'desc')->get();
+            return VisitingDetails::with('visitor','employee')->orderBy('id', 'desc')->get();
         }
     }
     public function take($number)
     {
         if (auth()->user()->getrole->name == 'Employee') {
-            return VisitingDetails::with('visitor', 'employee')->where(['employee_id' => auth()->user()->employee->id])->orderBy('id', 'desc')->take($number)->get();
+            return VisitingDetails::with('visitor','employee')->where(['employee_id' => auth()->user()->employee->id])->orderBy('id', 'desc')->take($number)->get();
         } else {
-            return VisitingDetails::with('visitor', 'employee')->orderBy('id', 'desc')->take($number)->get();
+            return VisitingDetails::with('visitor','employee')->orderBy('id', 'desc')->take($number)->get();
         }
     }
 
@@ -107,46 +108,41 @@ class VisitorService
             $reg_no = $data2 . $data1 . $data . '1';
         }
 
-        $input['first_name'] = $request->input('first_name');
-        $input['last_name'] = $request->input('last_name');
-        $input['email'] = $request->input('email');
-        $input['phone'] = preg_replace("/[^0-9]/", "", $request->input('phone'));
-        $input['gender'] = $request->input('gender');
-        $input['address'] = $request->input('address');
+        $input['first_name']                 = $request->input('first_name');
+        $input['last_name']                  = $request->input('last_name');
+        $input['email']                      = $request->input('email');
+        $input['phone']                      = preg_replace("/[^0-9]/", "", $request->input('phone'));
+        $input['country_code']               = $request->input('country_code');
+        $input['country_code_name']          = $request->input('country_code_name');
+        $input['gender']                     = $request->input('gender');
+        $input['address']                    = $request->input('address');
         $input['national_identification_no'] = $request->input('national_identification_no');
-        $input['is_pre_register'] = false;
-        $input['status'] = Status::ACTIVE;
-        $input['creator_id'] = 1;
-        $input['creator_type'] = 'App\Models\User';
-        $input['editor_type'] = 'App\Models\User';
-        $input['editor_id'] = 1;
+        $input['is_pre_register']            = false;
+        $input['status']                     = Status::ACTIVE;
+        $input['creator_id']                 = 1;
+        $input['creator_type']               = 'App\Models\User';
+        $input['editor_type']                = 'App\Models\User';
+        $input['editor_id']                  = 1;
 
         $file_name = 'qrcode-' . preg_replace("/[^0-9]/", "", $request->input('phone')) . '.png';
         $input['barcode']  = $file_name;
-        // Check if the directory exists, create it if not
-        if (!is_dir(public_path('qrcode'))) {
-            mkdir(public_path('qrcode'), 0777, true);
-        }
-
         $file = public_path('qrcode/' . $file_name);
         QRCode::size(300)->format('png')->generate(route('checkin.visitor-details', preg_replace("/[^0-9]/", "", $request->input('phone'))), $file);
         $visitor = Visitor::create($input);
 
         if ($visitor) {
-            $visiting['reg_no'] = $reg_no;
-            $visiting['purpose'] = $request->input('purpose');
+            $visiting['reg_no']       = $reg_no;
+            $visiting['purpose']      = $request->input('purpose');
             $visiting['company_name'] = $request->input('company_name');
-            $visiting['vehicle_registration_no'] = $request->input('vehicle_registration_no');
-            $visiting['belongings'] = $request->input('belongings');
-            $visiting['employee_id'] = $request->input('employee_id');
-            $visiting['visitor_id'] = $visitor->id;
-            $visiting['status'] = VisitorStatus::PENDDING;
-            $visiting['user_id'] = $request->input('employee_id');
-            $visiting['creator_id'] = 1;
+            $visiting['employee_id']  = $request->input('employee_id');
+            $visiting['visitor_id']   = $visitor->id;
+            $visiting['status']       = VisitorStatus::PENDDING;
+            $visiting['user_id']      = $request->input('employee_id');
+            $visiting['creator_id']   = 1;
             $visiting['creator_type'] = 'App\Models\User';
-            $visiting['editor_type'] = 'App\Models\User';
-            $visiting['editor_id'] = 1;
-            $visitingDetails = VisitingDetails::create($visiting);
+            $visiting['editor_type']  = 'App\Models\User';
+            $visiting['editor_id']    = 1;
+            $visitingDetails          = VisitingDetails::create($visiting);
             if ($request->file('image')) {
                 $visitingDetails->addMedia($request->file('image'))->toMediaCollection('visitor');
             }
@@ -182,16 +178,18 @@ class VisitorService
      */
     public function update($request, $id)
     {
-        $visitingDetails = VisitingDetails::findOrFail($id);
-        $input['first_name'] = $request->input('first_name');
-        $input['last_name'] = $request->input('last_name');
-        $input['email'] = $request->input('email');
-        $input['phone'] = preg_replace("/[^0-9]/", "", $request->input('phone'));
-        $input['gender'] = $request->input('gender');
-        $input['address'] = $request->input('address');
+        $visitingDetails                     = VisitingDetails::findOrFail($id);
+        $input['first_name']                 = $request->input('first_name');
+        $input['last_name']                  = $request->input('last_name');
+        $input['email']                      = $request->input('email');
+        $input['phone']                      = preg_replace("/[^0-9]/", "", $request->input('phone'));
+        $input['country_code']               = $request->input('country_code');
+        $input['country_code_name']          = $request->input('country_code_name');
+        $input['gender']                     = $request->input('gender');
+        $input['address']                    = $request->input('address');
         $input['national_identification_no'] = $request->input('national_identification_no');
-        $input['is_pre_register'] = false;
-        $input['status'] = Status::ACTIVE;
+        $input['is_pre_register']            = false;
+        $input['status']                     = Status::ACTIVE;
 
         $file_name = 'qrcode-' . preg_replace("/[^0-9]/", "", $request->input('phone')) . '.png';
         $input['barcode']  = $file_name;
@@ -200,14 +198,12 @@ class VisitorService
         $visitingDetails->visitor->update($input);
 
         if ($visitingDetails) {
-            $visiting['purpose'] = $request->input('purpose');
+            $visiting['purpose']      = $request->input('purpose');
             $visiting['company_name'] = $request->input('company_name');
-            $visiting['vehicle_registration_no'] = $request->input('vehicle_registration_no');
-            $visiting['belongings'] = $request->input('belongings');
-            $visiting['employee_id'] = $request->input('employee_id');
-            $visiting['visitor_id'] = $visitingDetails->visitor->id;
-            $visiting['status'] = Status::ACTIVE;
-            $visiting['user_id'] = $request->input('employee_id');
+            $visiting['employee_id']  = $request->input('employee_id');
+            $visiting['visitor_id']   = $visitingDetails->visitor->id;
+            $visiting['status']       = Status::ACTIVE;
+            $visiting['user_id']      = $request->input('employee_id');
             $visitingDetails->update($visiting);
         }
 
@@ -254,7 +250,6 @@ class VisitorService
         $visitor->phone = $request['phone'];
         $visitor->gender = $request['gender'];
         $visitor->address = $request['address'];
-        $visitor->national_identification_no = $request['national_identification_no'];
         $visitor->is_pre_register = false;
         $file_name = 'qrcode-' . preg_replace("/[^0-9]/", "", $request['phone']) . '.png';
         $visitor->barcode = $file_name;
@@ -264,8 +259,6 @@ class VisitorService
         if ($visitor) {
             $visiting['reg_no'] = $reg_no;
             $visiting['purpose'] = $request->input('purpose');
-            $visiting['vehicle_registration_no'] = $request->input('vehicle_registration_no');
-            $visiting['belongings'] = $request->input('belongings');
             $visiting['company_name'] = $request->input('company_name');
             $visiting['employee_id'] = $request->input('employee_id');
             $visiting['visitor_id'] = $visitor->id;

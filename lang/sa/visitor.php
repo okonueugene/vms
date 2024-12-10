@@ -17,7 +17,7 @@ return array (
   'host' => 'مضيف',
   'id' => 'بطاقة تعريف',
   'image' => 'صورة',
-  'last_name' => 'Last Name',
+  'last_name' => 'الاسم الأخير',
   'national_identification_no' => 'رقم الهوية الوطنية',
   'ph' => 'دكتوراه',
   'phone' => 'هاتف',

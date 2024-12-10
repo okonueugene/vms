@@ -1,5 +1,9 @@
 @extends('admin.layouts.master')
 
+@section('css')
+    <link rel="stylesheet" href="{{ asset('assets/lib/inttelinput/css/intlTelInput.css') }}">
+@endsection
+
 @section('main-content')
 
     <section class="section">
@@ -49,7 +53,11 @@
                                     </div>
                                     <div class="form-group col">
                                         <label>{{ __('levels.phone') }}</label> <span class="text-danger">*</span>
-                                        <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone', $user->phone) }}">
+                                        <input type="text" name="phone" id="number" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone', $user->phone) }}">
+                                        <input type="hidden" id="code" name="country_code"
+                                        value="{{ old('code', $user->country_code) }}">
+                                        <input type="hidden" id="code_name" name="country_code_name"
+                                        value="{{ old('code_name', $user->country_code_name) }}">
                                         @error('phone')
                                         <div class="invalid-feedback">
                                             {{ $message }}
@@ -153,4 +161,12 @@
 
 @section('scripts')
     <script src="{{ asset('js/adminuser/edit.js') }}"></script>
+    <script>
+        localStorage.setItem('country_code_name', '{{ $user->country_code_name }}');
+    </script>
+    <script defer src="{{ asset('assets/lib/inttelinput/js/intlTelInput-jquery.js') }}"></script>
+    <script defer src="{{ asset('assets/lib/inttelinput/js/intlTelInput.js') }}"></script>
+    <script defer src="{{ asset('assets/lib/inttelinput/js/utils.js') }}"></script>
+    <script defer src="{{ asset('assets/lib/inttelinput/js/data.js') }}"></script>
+    <script defer src="{{ asset('assets/lib/inttelinput/js/init.js') }}"></script>
 @endsection

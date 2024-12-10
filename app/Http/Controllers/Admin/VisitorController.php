@@ -64,16 +64,16 @@ class VisitorController extends BackendController
     public function store(VisitorRequest $request)
     {
         $visitingDetail = $this->visitorService->make($request);
-        $imageUrl = 'app/public' . str_replace(asset('storage'), "", $visitingDetail->images);
-        try {
+        $imageUrl = 'app/public'.str_replace(asset('storage'),"",$visitingDetail->images);
+        try{
             $optimizerChain = OptimizerChainFactory::create();
             $optimizerChain->optimize(storage_path($imageUrl));
-        } catch(\Exception $e) {
+        }catch(\Exception $e){
 
         }
 
         if (setting('whatsapp_message')) {
-            return redirect()->route('admin.visitors.show', $visitingDetail->id);
+            return redirect()->route('admin.visitors.show',$visitingDetail->id);
 
         }
 
@@ -138,11 +138,11 @@ class VisitorController extends BackendController
     public function update(VisitorRequest $request, VisitingDetails $visitor)
     {
         $visitingDetail = $this->visitorService->update($request, $visitor->id);
-        $imageUrl = 'app/public' . str_replace(asset('storage'), "", $visitingDetail->images);
-        try {
+        $imageUrl = 'app/public'.str_replace(asset('storage'),"",$visitingDetail->images);
+        try{
             $optimizerChain = OptimizerChainFactory::create();
             $optimizerChain->optimize(storage_path($imageUrl));
-        } catch(\Exception $e) {
+        }catch(\Exception $e){
 
         }
         return redirect()->route('admin.visitors.index')->withSuccess('The data updated successfully!');
@@ -177,7 +177,7 @@ class VisitorController extends BackendController
                 }
 
                 if (auth()->user()->can('visitors_show')) {
-                    $retAction .= '<a href="' . route('admin.visitors.disable', $visitingDetail->id) . '" class="btn btn-sm btn-icon mr-1 float-left btn-' . (!$visitingDetail->disable ? "danger" : "success") . '" data-toggle="tooltip" data-placement="top" title="' . (!$visitingDetail->disable ? "Block Visitor" : "Unblock Visitor") . '"><i class="fa fa-ban"></i></a>';
+                    $retAction .= '<a href="' . route('admin.visitors.disable', $visitingDetail->id) . '" class="btn btn-sm btn-icon mr-1 float-left btn-'.(!$visitingDetail->disable ? "danger" : "success").'" data-toggle="tooltip" data-placement="top" title="'.(!$visitingDetail->disable ? "Block Visitor" : "Unblock Visitor").'"><i class="fa fa-ban"></i></a>';
                 }
 
                 if (auth()->user()->can('visitors_show')) {
@@ -206,7 +206,7 @@ class VisitorController extends BackendController
             })
 
             ->editColumn('phone', function ($visitingDetail) {
-                return Str::limit(optional($visitingDetail->visitor)->phone, 50);
+                return Str::limit(optional($visitingDetail->visitor)->country_code.optional($visitingDetail->visitor)->phone, 50);
             })
             ->editColumn('employee_id', function ($visitingDetail) {
                 return optional($visitingDetail->employee->user)->name;
@@ -270,7 +270,7 @@ class VisitorController extends BackendController
         return redirect()->route('admin.visitors.index')->withSuccess('Successfully Check-Out!');
     }
 
-    public function changeStatus($id, $status, $dashboard = false)
+    public function changeStatus($id, $status,$dashboard=false)
     {
         $visitor         = VisitingDetails::findOrFail($id);
         $visitor->status = $status;
@@ -283,7 +283,8 @@ class VisitorController extends BackendController
         } catch (\Exception $e) {
 
         }
-        if($dashboard) {
+
+        if($dashboard){
             return redirect()->route('admin.dashboard.index')->withSuccess('The Status Change successfully!');
         }
         return redirect()->route('admin.visitors.index');
@@ -294,7 +295,7 @@ class VisitorController extends BackendController
         $visitor         = VisitingDetails::findOrFail($id);
         if (!$visitor->disable) {
             $visitor->disable = true;
-        } else {
+        }else{
             $visitor->disable = false;
         }
         $visitor->save();

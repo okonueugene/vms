@@ -43,4 +43,6 @@ return array (
   'url' => 'URL',
   'user' => 'Benutzer',
   'username' => 'Username',
+  'service_account_private_key_file' => 'Service Account Private Key File',
+  'json'                             => 'JSON',
 );

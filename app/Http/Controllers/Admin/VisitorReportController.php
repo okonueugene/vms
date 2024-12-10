@@ -11,7 +11,7 @@ class VisitorReportController extends BackendController
     public function __construct()
     {
         parent::__construct();
-        $this->data['siteTitle'] = 'Visitor Report';
+        $this->data['sitetitle'] = 'Visitor Report';
 
         $this->middleware(['permission:admin-visitor-report'])->only('index');
     }

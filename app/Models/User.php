@@ -22,7 +22,7 @@ class User extends Authenticatable implements JWTSubject, HasMedia
      */
     
     protected $fillable = [
-        'first_name', 'last_name', 'email', 'username', 'password', 'phone', 'address', 'roles', 'device_token','web_token', 'status',
+        'first_name', 'last_name', 'email', 'username', 'password', 'phone', 'address', 'roles', 'device_token','web_token', 'status', 'country_code', 'country_code_name'
     ];
  
     protected $guard_name = 'web';

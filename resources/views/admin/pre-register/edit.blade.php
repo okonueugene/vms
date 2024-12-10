@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="{{ asset('assets/modules/summernote/summernote-bs4.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/modules/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/modules/bootstrap-timepicker/css/bootstrap-timepicker.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/lib/inttelinput/css/intlTelInput.css') }}">
 @endsection
 
 @section('main-content')
@@ -47,7 +48,7 @@
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col">
-                                        <label>{{ __('pre_register.email_address') }}</label> <span class="text-danger">*</span>
+                                        <label>{{ __('pre_register.email_address') }}</label>
                                         <input type="text" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email',$preregister->visitor->email) }}">
                                         @error('email')
                                         <div class="invalid-feedback">
@@ -57,7 +58,11 @@
                                     </div>
                                     <div class="form-group col">
                                         <label>{{ __('pre_register.phone') }}</label> <span class="text-danger">*</span>
-                                        <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone',$preregister->visitor->phone) }}">
+                                        <input type="text" name="phone" id="number" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone',$preregister->visitor->phone) }}">
+                                        <input type="hidden" id="code" name="country_code"
+                                        value="{{ old('code', $preregister->visitor->country_code) }}">
+                                        <input type="hidden" id="code_name" name="country_code_name"
+                                        value="{{ old('code_name', $preregister->visitor->country_code_name) }}">
                                         @error('phone')
                                         <div class="invalid-feedback">
                                             {{ $message }}
@@ -65,7 +70,7 @@
                                         @enderror
                                     </div>
                                     <div class="form-group col">
-                                        <label>{{ __('visitor.national_identification_no') }}</label> <span class="text-danger">*</span>
+                                        <label>{{ __('visitor.national_identification_no') }}</label>
                                         <input type="text" name="national_identification_no" class="form-control @error('national_identification_no') is-invalid @enderror" value="{{ old('national_identification_no',$preregister->visitor->national_identification_no) }}">
                                         @error('national_identification_no')
                                         <div class="invalid-feedback">
@@ -175,4 +180,12 @@
     <script src="{{ asset('assets/modules/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
     <script src="{{ asset('assets/modules/bootstrap-timepicker/js/bootstrap-timepicker.min.js') }}"></script>
     <script src="{{ asset('js/preregister/edit.js') }}"></script>
+    <script>
+        localStorage.setItem('country_code_name', '{{ $preregister->visitor->country_code_name }}');
+    </script>
+    <script defer src="{{ asset('assets/lib/inttelinput/js/intlTelInput-jquery.js') }}"></script>
+    <script defer src="{{ asset('assets/lib/inttelinput/js/intlTelInput.js') }}"></script>
+    <script defer src="{{ asset('assets/lib/inttelinput/js/utils.js') }}"></script>
+    <script defer src="{{ asset('assets/lib/inttelinput/js/data.js') }}"></script>
+    <script defer src="{{ asset('assets/lib/inttelinput/js/init.js') }}"></script>
 @endsection

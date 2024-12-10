@@ -8,8 +8,9 @@ use Illuminate\Validation\Rule;
 
 class VisitorRequest extends FormRequest
 {
+
     private $visitor_id;
-    public function __construct($id = null)
+    public  function __construct($id = null)
     {
         parent::__construct();
         $this->visitor_id = $id ? $id : 0;
@@ -25,12 +26,12 @@ class VisitorRequest extends FormRequest
     {
         if ($this->visitor) {
             $email                      = blank(request('email')) ? '' : ['string', Rule::unique("visitors", "email")->ignore($this->visitor->visitor_id)];
-            $national_identification_no = ['required', 'string', 'max:100', Rule::unique("visitors", "national_identification_no")->ignore($this->visitor->visitor_id)];
+            $national_identification_no = ['required','string', 'max:100', Rule::unique("visitors", "national_identification_no")->ignore($this->visitor->visitor_id), 'nullable'];
             $phone                      = ['required', 'string', Rule::unique("visitors", "phone")->ignore($this->visitor->visitor_id)];
         } elseif ($this->visitor_id) {
             $email    = blank(request('email')) ? '' : ['email', 'string'];
             $phone    = ['required', 'string'];
-            $national_identification_no    = ['required', 'string', 'max:100'];
+            $national_identification_no    = ['required','string', 'max:100', 'nullable'];
         } else {
             $uniqueEmail = $this->checkUniqueEmail(request('email'), request('visitor_old'));
             $uniquePhone = $this->checkUniquePhone(request('phone'), request('visitor_old'));
@@ -39,25 +40,28 @@ class VisitorRequest extends FormRequest
             $phone    = $uniquePhone;
             $national_identification_no    = $uniqueNID;
         }
-        if(setting('photo_capture_enable')) {
-            $image = 'image|mimes:jpeg,png,jpg|max:5098';
-        } else {
+
+        if(setting('photo_capture_enable') && !request()->is('admin/*')){
+            $image = 'required|image|mimes:jpeg,png,jpg|max:5098';
+        }else{
             $image = 'image|mimes:jpeg,png,jpg|max:5098';
         }
         return [
-            'first_name'                => 'required|string|max:100',
-            'last_name'                 => 'required|string|max:100',
-            'email'                     => $email,
-            'phone'                     => $phone,
-            'employee_id'               => 'required|numeric',
-            'gender'                    => 'required|numeric',
-            'company_name'              => 'nullable|max:100',
+            'first_name'                 => 'required|string|max:100',
+            'last_name'                  => 'required|string|max:100',
+            'email'                      => $email,
+            'phone'                      => $phone,
+            'country_code'               => 'nullable|max:100',
+            'country_code_name'          => 'nullable|max:100',
+            'company_name'               => 'nullable|max:100',
+            'company_name'               => 'nullable|max:100',
+            'employee_id'                => 'required|numeric',
+            'gender'                     => 'required|numeric',
+            'company_name'               => 'nullable|max:100',
             'national_identification_no' => $national_identification_no,
-            'purpose'                   => 'required|max:191',
-            'address'                   => 'nullable|max:191',
-            'image'                     => $image,
-            'vehicle_registration_no'   => 'nullable|max:191',
-            'belongings'                => 'nullable|max:191',
+            'purpose'                    => 'required|max:191',
+            'address'                    => 'nullable|max:191',
+            'image'                      => $image,
         ];
     }
 
@@ -83,9 +87,9 @@ class VisitorRequest extends FormRequest
     {
         $visitor = Visitor::where('national_identification_no', $nid)->first();
         if ($visitor && ($visitor_old == 1)) {
-            return  ['required', 'string', 'max:100'];
+            return  ['string', 'max:100', 'nullable'];
         } else {
-            return  ['required', 'string', 'max:100', 'unique:visitors,national_identification_no'];
+            return  ['string', 'max:100', 'unique:visitors,national_identification_no', 'nullable'];
         }
     }
 }

@@ -72,7 +72,7 @@
                                                 <td>{{$i+=1 }}</td>
                                                 <td>{{ Str::limit(optional($preRegister->visitor)->name, 50)}}</td>
                                                 <td>{{ Str::limit(optional($preRegister->visitor)->email, 50) }}</td>
-                                                <td>{{optional($preRegister->visitor)->phone}}</td>
+                                                <td>{{optional($preRegister->visitor)->country_code}}{{optional($preRegister->visitor)->phone}}</td>
                                                 <td>{{optional($preRegister->employee->user)->name}}</td>
                                                 @if (optional($preRegister->visitor)->is_pre_register==1)
                                                     <td><p class="text-danger">{{$preRegister->expected_date}}</p></td>

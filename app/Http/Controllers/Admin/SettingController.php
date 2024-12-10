@@ -7,7 +7,9 @@ use App\Enums\Status;
 use App\Models\Language;
 use App\Libraries\MyString;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\BackendController;
 
 class SettingController extends BackendController
@@ -25,7 +27,7 @@ class SettingController extends BackendController
     // Site Setting
     public function index()
     {
-        $this->data['language'] = Language::where('status',Status::ACTIVE)->get();
+        $this->data['language'] = Language::where('status', Status::ACTIVE)->get();
         return view('admin.setting.site', $this->data);
     }
 
@@ -33,11 +35,11 @@ class SettingController extends BackendController
     {
 
 
-        $niceNames    = [];
+        $niceNames = [];
         $settingArray = $this->validate($request, $this->siteValidateArray(), [], $niceNames);
 
         if ($request->hasFile('site_logo')) {
-            $site_logo                 = request('site_logo');
+            $site_logo = request('site_logo');
             $settingArray['site_logo'] = $site_logo->getClientOriginalName();
             $request->site_logo->move(public_path('images'), $settingArray['site_logo']);
         } else {
@@ -64,7 +66,7 @@ class SettingController extends BackendController
     public function smsSettingUpdate(Request $request)
     {
         if ($request->settingsms == 'twilio') {
-            $niceNames    = [];
+            $niceNames = [];
             $settingArray = $this->validate($request, $this->smsValidateArray(), [], $niceNames);
 
             Setting::set($settingArray);
@@ -81,18 +83,33 @@ class SettingController extends BackendController
 
     public function fcmSettingUpdate(Request $request)
     {
-        $niceNames                = [];
-        $notificationSettingArray = $this->validate($request, $this->fcmNotificationValidateArray(), [], $niceNames);
+        $niceNames = [];
+        $rules = $this->fcmNotificationValidateArray();
 
-        $fcm_secret_key = str_replace(' ', '', $notificationSettingArray['fcm_secret_key']);
-        $fcm_topic = str_replace(' ', '_', $notificationSettingArray['fcm_topic']);
+        $validator = Validator::make($request->all(), $rules, [], $niceNames);
+        $this->withValidator($validator);
 
-        MyString::setEnv('FCM_SECRET_KEY', $fcm_secret_key);
-        MyString::setEnv('FCM_TOPIC', $fcm_topic);
-        Artisan::call('optimize:clear');
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $notificationSettingArray = $validator->validated();
+
+        if ($request->hasFile('private_key')) {
+            $previous_file = setting('private_key');
+            if (File::exists(storage_path('app/firebase/' . $previous_file))) {
+                File::delete(storage_path('app/firebase/' . $previous_file));
+            }
+            $request_file = $request->file('private_key');
+            $extension = $request_file->getClientOriginalExtension();
+            $notificationSettingArray['private_key'] = 'service-account-file' . '.' . $extension;
+            $uniqueFile = $notificationSettingArray['private_key'];
+            $request->file('private_key')->move(storage_path('app/firebase/'), $uniqueFile);
+        }
 
         Setting::set($notificationSettingArray);
         Setting::save();
+        
         return redirect(route('admin.setting.fcm'))->withSuccess('The Firebase Notification setting updated successfully.');
     }
 
@@ -104,7 +121,7 @@ class SettingController extends BackendController
 
     public function mailTemplateSettingUpdate(Request $request)
     {
-        $niceNames    = [];
+        $niceNames = [];
         $settingArray = $this->validate($request, $this->emailTemplateValidateArray(), [], $niceNames);
 
         Setting::set($settingArray);
@@ -121,7 +138,7 @@ class SettingController extends BackendController
 
     public function emailSettingUpdate(Request $request)
     {
-        $niceNames         = [];
+        $niceNames = [];
         $emailSettingArray = $this->validate($request, $this->emailValidateArray(), [], $niceNames);
         if (isset($emailSettingArray['mail_host'])) {
             MyString::setEnv('MAIL_HOST', $emailSettingArray['mail_host']);
@@ -144,12 +161,12 @@ class SettingController extends BackendController
         }
 
         if (isset($emailSettingArray['mail_from_address'])) {
-            $address=  '"'.$emailSettingArray['mail_from_address'].'"';
+            $address = '"' . $emailSettingArray['mail_from_address'] . '"';
             MyString::setEnv('MAIL_FROM_ADDRESS', $address);
         }
 
         if (isset($emailSettingArray['mail_from_name'])) {
-            $name=  '"'.$emailSettingArray['mail_from_name'].'"';
+            $name = '"' . $emailSettingArray['mail_from_name'] . '"';
             MyString::setEnv('MAIL_FROM_NAME', $name);
         }
         Artisan::call('optimize:clear');
@@ -168,7 +185,7 @@ class SettingController extends BackendController
     public function notificationSettingUpdate(Request $request)
     {
 
-        $niceNames                = [];
+        $niceNames = [];
         $notificationSettingArray = $this->validate($request, $this->notificationValidateArray(), [], $niceNames);
 
         Setting::set($notificationSettingArray);
@@ -185,7 +202,7 @@ class SettingController extends BackendController
 
     public function homepageSettingUpdate(Request $request)
     {
-        $niceNames    = [];
+        $niceNames = [];
         $settingArray = $this->validate($request, $this->frontendValidateArray(), [], $niceNames);
         Setting::set($settingArray);
         Setting::save();
@@ -199,15 +216,16 @@ class SettingController extends BackendController
     private function siteValidateArray()
     {
         return [
-            'site_name'         => 'required|string|max:100',
-            'site_email'        => 'required|string|max:100',
-            'site_phone_number' => 'required','max:60',
-            'site_footer'       => 'required|string|max:200',
-            'timezone'          => 'required|string',
-            'site_logo'         => 'nullable|mimes:jpeg,jpg,png,gif|max:3096',
-            'site_description'  => 'required|string|max:500',
-            'site_address'      => 'required|string|max:500',
-            'locale'            => 'nullable|string',
+            'site_name' => 'required|string|max:100',
+            'site_email' => 'required|string|max:100',
+            'site_phone_number' => 'required',
+            'max:60',
+            'site_footer' => 'required|string|max:200',
+            'timezone' => 'required|string',
+            'site_logo' => 'nullable|mimes:jpeg,jpg,png,gif|max:3096',
+            'site_description' => 'required|string|max:500',
+            'site_address' => 'required|string|max:500',
+            'locale' => 'nullable|string',
         ];
     }
 
@@ -215,10 +233,10 @@ class SettingController extends BackendController
     private function smsValidateArray()
     {
         return [
-            'twilio_auth_token'  => 'required|string|max:200',
+            'twilio_auth_token' => 'required|string|max:200',
             'twilio_account_sid' => 'required|string|max:200',
-            'twilio_from'        => 'required|string|max:20',
-            'twilio_disabled'    => 'numeric',
+            'twilio_from' => 'required|string|max:20',
+            'twilio_disabled' => 'numeric',
         ];
     }
 
@@ -227,13 +245,13 @@ class SettingController extends BackendController
     private function emailValidateArray()
     {
         return [
-            'mail_host'         => 'required|string|max:100',
-            'mail_port'         => 'required|string|max:100',
-            'mail_username'     => 'required|string|max:100',
-            'mail_password'     => 'required|string|max:100',
-            'mail_from_name'    => 'required|string|max:100',
+            'mail_host' => 'required|string|max:100',
+            'mail_port' => 'required|string|max:100',
+            'mail_username' => 'required|string|max:100',
+            'mail_password' => 'required|string|max:100',
+            'mail_from_name' => 'required|string|max:100',
             'mail_from_address' => 'required|string|max:200',
-            'mail_disabled'     => 'numeric',
+            'mail_disabled' => 'numeric',
         ];
     }
 
@@ -241,26 +259,44 @@ class SettingController extends BackendController
     private function notificationValidateArray()
     {
         return [
-            'notifications_email'           => 'nullable|string|max:100',
-            'notifications_sms'             => 'nullable|string|max:100',
+            'notifications_email' => 'nullable|string|max:100',
+            'notifications_sms' => 'nullable|string|max:100',
         ];
     }
 
-     // FCM Notification Setting validation
-     private function fcmNotificationValidateArray()
-     {
-         return [
-             'fcm_secret_key' => 'required|string|max:255',
-             'fcm_topic'      => 'required|string|max:255',
-         ];
-     }
+    // FCM Notification Setting validation
+    private function fcmNotificationValidateArray()
+    {
+        return [
+            'apiKey'            => 'required|string|max:255',
+            'authDomain'        => 'required|string|max:255',
+            'projectId'         => 'required|string|max:255',
+            'storageBucket'     => 'required|string|max:255',
+            'messagingSenderId' => 'required|string|max:255',
+            'appId'             => 'required|string|max:255',
+            'measurementId'     => 'required|string|max:255',
+            'private_key'       => ['nullable', 'file', 'mimes:json', 'max:2048']
+        ];
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            if (empty(request('private_key'))) {
+                $notification = setting('private_key');
+                if (empty($notification)) {
+                    $validator->errors()->add('private_key', 'The file field is required');
+                }
+            }
+        });
+    }
 
     // Notification Setting validation
     private function emailTemplateValidateArray()
     {
         return [
-            'notify_templates'              => 'nullable|string|max:150',
-            'invite_templates'              => 'nullable|string|max:150',
+            'notify_templates' => 'nullable|string|max:150',
+            'invite_templates' => 'nullable|string|max:150',
         ];
     }
 
@@ -268,10 +304,11 @@ class SettingController extends BackendController
     private function frontendValidateArray()
     {
         return [
-            'front_end_enable_disable'      => 'required|string|max:100',
-            'photo_capture_enable'          => 'required|string|max:100',
-            'welcome_screen'                => 'nullable|string|max:255',
-            'terms_condition'               => 'nullable|string|max:255',
+            'front_end_enable_disable' => 'required|string|max:100',
+            'photo_capture_enable' => 'required|string|max:100',
+            'terms_visibility_status' => 'required|string|max:100',
+            'welcome_screen' => 'nullable|string|max:255',
+            'terms_condition' => 'nullable|string',
         ];
     }
 
@@ -279,9 +316,9 @@ class SettingController extends BackendController
     private function whatsappValidateArray()
     {
         return [
-            'whatsapp_message'                  => 'nullable|string|max:100',
-            'whatsapp_accept_message'           => 'nullable|string|max:100',
-            'whatsapp_decline_message'          => 'nullable|string|max:100',
+            'whatsapp_message' => 'nullable|string|max:100',
+            'whatsapp_accept_message' => 'nullable|string|max:100',
+            'whatsapp_decline_message' => 'nullable|string|max:100',
         ];
     }
 
@@ -292,7 +329,7 @@ class SettingController extends BackendController
 
     public function whatsappSettingupdate(Request $request)
     {
-        $niceNames                = [];
+        $niceNames = [];
         $whatsappSettingArray = $this->validate($request, $this->whatsappValidateArray(), [], $niceNames);
 
         Setting::set($whatsappSettingArray);

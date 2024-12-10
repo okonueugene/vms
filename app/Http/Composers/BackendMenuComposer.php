@@ -24,7 +24,6 @@ class BackendMenuComposer
 
         $this->frontendMenu($nodes, $myMenu);
 
-
         return $myMenu;
     }
 

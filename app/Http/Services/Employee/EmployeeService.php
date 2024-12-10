@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 
 class EmployeeService
@@ -73,15 +74,17 @@ class EmployeeService
      */
     public function make(EmployeeRequest $request)
     {
-        $input['first_name'] = $request->input('first_name');
-        $input['last_name']  = $request->input('last_name');
-        $input['username']   = $this->username($request->input('email'));
-        $input['email']      = $request->input('email');
-        $input['phone']      = $request->input('phone');
-        $input['status']      = $request->input('status');
-        $input['password']   = Hash::make($request->input('password'));
-               $user         = User::create($input);
-               $role         = Role::find(2);
+        $input['first_name']        = $request->input('first_name');
+        $input['last_name']         = $request->input('last_name');
+        $input['username']          = $this->username($request->input('email'));
+        $input['email']             = $request->input('email');
+        $input['phone']             = $request->input('phone');
+        $input['country_code']      = $request->input('country_code') ? $request->input('country_code'):'1';
+        $input['country_code_name'] = $request->input('country_code_name') ? $request->input('country_code_name') : 'us';
+        $input['status']            = $request->input('status');
+        $input['password']          = Hash::make($request->input('password'));
+        $user                       = User::create($input);
+        $role                       = Role::find(2);
         $user->assignRole($role->name);
 
         if ($request->file('image')) {
@@ -89,16 +92,24 @@ class EmployeeService
         }
         $result='';
         if($user) {
-            $data['first_name'] = $request->input('first_name');
-            $data['last_name'] = $request->input('last_name');
-            $data['phone'] = $request->input('phone');
-            $data['user_id'] = $user->id;
-            $data['gender'] = $request->input('gender');
-            $data['department_id'] = $request->input('department_id');
-            $data['designation_id'] = $request->input('designation_id');
-            $data['date_of_joining'] = $request->input('date_of_joining');
-            $data['about'] = $request->input('about');
-            $data['status'] = $request->input('status');
+        $data['first_name']        = $request->input('first_name');
+        $data['last_name']         = $request->input('last_name');
+        $data['phone']             = $request->input('phone');
+        $data['country_code']      = $request->input('country_code') ? $request->input('country_code'):'1';
+        $data['country_code_name'] = $request->input('country_code_name') ? $request->input('country_code_name') : 'us';
+        $data['user_id']           = $user->id;
+        $data['gender']            = $request->input('gender');
+        $data['department_id']     = $request->input('department_id');
+        $data['designation_id']    = $request->input('designation_id');
+        $data['date_of_joining']   = $request->input('date_of_joining');
+        $data['about']             = $request->input('about');
+        $data['status']            = $request->input('status');
+
+            $file_name = 'qrcode-' . preg_replace("/[^0-9]/", "", $request->input('phone')) . '.png';
+            $data['barcode']  = $file_name;
+            $file = public_path('qrcode/' . $file_name);
+            QRCode::size(300)->format('png')->generate(route('checkin.visitor-details', preg_replace("/[^0-9]/", "", $request->input('phone'))), $file);
+
             $result = Employee::create($data);
 
 
@@ -114,13 +125,15 @@ class EmployeeService
      */
     public function update($id, EmployeeUpdateRequest $request)
     {
-        $employee = Employee::find($id);
-        $input['first_name'] = $request->input('first_name');
-        $input['last_name'] = $request->input('last_name');
-        $input['username'] = $this->username($request->input('email'));
-        $input['email'] = $request->input('email');
-        $input['phone'] = $request->input('phone');
-        $input['status']      = $request->input('status');
+        $employee                   = Employee::find($id);
+        $input['first_name']        = $request->input('first_name');
+        $input['last_name']         = $request->input('last_name');
+        $input['username']          = $this->username($request->input('email'));
+        $input['email']             = $request->input('email');
+        $input['phone']             = $request->input('phone');
+        $input['country_code']      = $request->input('country_code') ? $request->input('country_code'):'1';
+        $input['country_code_name'] = $request->input('country_code_name') ? $request->input('country_code_name') : 'us';
+        $input['status']            = $request->input('status');
         $user = User::find($employee->user_id);
         $user->update($input);
         if ($request->file('image')) {
@@ -128,16 +141,24 @@ class EmployeeService
             $user->addMedia($request->file('image'))->toMediaCollection('user');
         }
         if($user) {
-            $data['first_name'] = $request->input('first_name');
-            $data['last_name'] = $request->input('last_name');
-            $data['phone'] = $request->input('phone');
-            $data['user_id'] = $user->id;
-            $data['gender'] = $request->input('gender');
-            $data['department_id'] = $request->input('department_id');
-            $data['designation_id'] = $request->input('designation_id');
-            $data['date_of_joining'] = $request->input('date_of_joining');
-            $data['about'] = $request->input('about');
-            $data['status'] = $request->input('status');
+            $data['first_name']        = $request->input('first_name');
+            $data['last_name']         = $request->input('last_name');
+            $data['phone']             = $request->input('phone');
+            $data['country_code']      = $request->input('country_code') ? $request->input('country_code'):'1';
+            $data['country_code_name'] = $request->input('country_code_name') ? $request->input('country_code_name') : 'us';
+            $data['user_id']           = $user->id;
+            $data['gender']            = $request->input('gender');
+            $data['department_id']     = $request->input('department_id');
+            $data['designation_id']    = $request->input('designation_id');
+            $data['date_of_joining']   = $request->input('date_of_joining');
+            $data['about']             = $request->input('about');
+            $data['status']            = $request->input('status');
+
+            $file_name = 'qrcode-' . preg_replace("/[^0-9]/", "", $request->input('phone')) . '.png';
+            $data['barcode']  = $file_name;
+            $file = public_path('qrcode/' . $file_name);
+            QRCode::size(300)->format('png')->generate(route('checkin.visitor-details', preg_replace("/[^0-9]/", "", $request->input('phone'))), $file);
+
             $employee->update($data);
 
         }

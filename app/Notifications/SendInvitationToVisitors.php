@@ -43,6 +43,7 @@ class SendInvitationToVisitors extends Notification implements ShouldQueue
         }
 
         if (setting('notifications_email') != false &&
+            !blank($this->pre_register->visitor->email) &&
             !blank(setting('mail_host')) &&
             !blank(setting('mail_username')) &&
             !blank(setting('mail_password')) &&
@@ -64,7 +65,7 @@ class SendInvitationToVisitors extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-    
+
         return (new MailMessage)
             ->subject("You Have Been Invited in a new Visitor#")
             ->greeting('Hello!')

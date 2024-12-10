@@ -1,7 +1,7 @@
 @component('mail::message')
 # {{ __('Hello') }} {{ Str::ucfirst($visitor['name']) }},<br>
 @component('mail::panel')
-{{ __('New Visitor Register please Approved your visitor') }}
+{{ __('A New Visitor Registered! Please check the details and take actions.') }}
 <h4 style="">{{ __('Visitor Information') }}</h4>
 
 <p>{{ __('Name:') }} {{ Str::ucfirst($visitor['visitor_name']) }} </p>

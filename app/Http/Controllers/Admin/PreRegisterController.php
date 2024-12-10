@@ -16,8 +16,9 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\PreRegisterRequest;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Http\Services\PreRegister\PreRegisterService;
+use App\Http\Controllers\BackendController;
 
-class PreRegisterController extends Controller
+class PreRegisterController extends BackendController
 {
     protected $preRegisterService;
 
@@ -41,7 +42,7 @@ class PreRegisterController extends Controller
      */
     public function index(Request $request)
     {
-        
+
         return view('admin.pre-register.index');
     }
 
@@ -61,9 +62,9 @@ class PreRegisterController extends Controller
         $preRegister = $this->preRegisterService->make($request);
 
         if (setting('whatsapp_message')) {
-                return redirect()->route('admin.pre-registers.show',$preRegister->id);
-                
+            return redirect()->route('admin.pre-registers.show',$preRegister->id);
         }
+
         return redirect()->route('admin.pre-registers.index')->withSuccess('The data inserted successfully!');
     }
 
@@ -128,7 +129,7 @@ class PreRegisterController extends Controller
         return Datatables::of($pre_registerArray)
             ->addColumn('action', function ($pre_register) {
                 $retAction ='';
-                
+
                 if(auth()->user()->can('pre-registers_show')) {
                     $retAction .= '<a href="' . route('admin.pre-registers.show', $pre_register) . '" class="btn btn-sm btn-icon mr-2  float-left btn-info" data-toggle="tooltip" data-placement="top" title="View"><i class="far fa-eye"></i></a>';
                 }
@@ -152,7 +153,7 @@ class PreRegisterController extends Controller
                 return Str::limit(optional($pre_register->visitor)->email, 50);
             })
             ->editColumn('phone', function ($pre_register) {
-                return Str::limit(optional($pre_register->visitor)->phone, 50);
+                return Str::limit(optional($pre_register->visitor)->country_code.optional($pre_register->visitor)->phone, 50);
             })
             ->editColumn('employee_id', function ($pre_register) {
                 return optional($pre_register->employee->user)->name;

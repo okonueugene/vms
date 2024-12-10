@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers\Api\v1\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\PasswordUpdateRequest;
-use App\Http\Requests\Api\ProfileUpdateRequest;
-use App\Http\Resources\v1\MeResource;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Tymon\JWTAuth\Exceptions\TokenInvalidException;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Enums\UserRole;
+use App\Models\Employee;
 use App\Traits\ApiResponse;
+use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\v1\MeResource;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\Api\ProfileUpdateRequest;
+use App\Http\Requests\Api\PasswordUpdateRequest;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
 class MeController extends Controller
 {
@@ -53,7 +55,7 @@ class MeController extends Controller
             'success'    => true,
             'token'      => $token,
             "token_type" => "bearer",
-            'expires_in' => config('jwt.ttl')*360000,
+            'expires_in' => config('jwt.ttl') * 360000,
         ], 200);
     }
 
@@ -76,24 +78,28 @@ class MeController extends Controller
                 'message' => $validator->errors(),
             ], 422);
         }
-        $firstName = '';
-        $lastName  = '';
-        if ($request->has('name')) {
-            $parts     = $this->splitName($request->get('name'));
-            $firstName = $parts[0];
-            $lastName  = $parts[1];
-        }
 
-        $profile->first_name = $firstName;
-        $profile->last_name  = $lastName;
-
-        $profile->email      = $request->get('email');
-        $profile->phone      = $request->get('phone');
-        $profile->address    = $request->get('address');
+        $profile->first_name        = $request->get('first_name');
+        $profile->last_name         = $request->get('last_name');
+        $profile->email             = $request->get('email');
+        $profile->phone             = $request->get('phone');
+        $profile->country_code      = $request->get('country_code');
+        $profile->country_code_name = $request->get('country_code_name');
+        $profile->address           = $request->get('address');
         if ($request->username) {
             $profile->username = $request->username;
         }
         $profile->save();
+
+        if (auth()->user()->myrole == UserRole::EMPLOYEE) {
+            $employee = Employee::where('user_id', auth()->user()->id)->first();
+            $employee->first_name        = $request->get('first_name');
+            $employee->last_name         = $request->get('last_name');
+            $employee->phone             = $request->get('phone');
+            $employee->country_code      = $request->get('country_code');
+            $employee->country_code_name = $request->get('country_code_name');
+            $employee->save();
+        }
 
         if (request()->file('image')) {
             $profile->media()->delete();

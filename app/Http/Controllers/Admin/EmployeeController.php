@@ -2,32 +2,29 @@
 
 namespace App\Http\Controllers\Admin;
 
-use DB;
 use App\Enums\Status;
-use App\Models\Booking;
-use App\Models\Visitor;
-use App\Models\Employee;
-use App\Models\Attendance;
-use App\Models\Department;
-use App\Models\Invitation;
-use App\Models\Designation;
-use App\Models\PreRegister;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use App\Models\VisitingDetails;
-use App\Imports\EmployeesImport;
-use Yajra\Datatables\Datatables;
 use App\Http\Controllers\Controller;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Http\Requests\EmployeeRequest;
-use App\Exports\EmployeesTemplateExport;
 use App\Http\Requests\BookingDateRequest;
 use App\Http\Requests\EmployeeChekinRequest;
+use App\Http\Requests\EmployeeRequest;
 use App\Http\Requests\EmployeeUpdateRequest;
-use Illuminate\Support\Facades\Notification;
+use App\Models\Attendance;
+use App\Models\Booking;
+use App\Models\Department;
+use App\Models\Designation;
+use App\Models\Employee;
+use App\Models\Invitation;
+use App\Models\PreRegister;
+use App\Models\VisitingDetails;
+use App\Models\Visitor;
+use App\Notifications\SendInvitationToVisitors;
 use App\Http\Services\Booking\BookingService;
 use App\Http\Services\Employee\EmployeeService;
-use App\Notifications\SendInvitationToVisitors;
+use Illuminate\Http\Request;
+use DB;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Str;
+use Yajra\Datatables\Datatables;
 
 class EmployeeController extends Controller
 {
@@ -57,7 +54,7 @@ class EmployeeController extends Controller
     public function index()
     {
         $employees = $this->employeeService->all();
-        return view('admin.employee.index', $this->data)->with('employees', $employees);
+        return view('admin.employee.index', $this->data);
     }
 
     public function create(Request $request)
@@ -153,7 +150,7 @@ class EmployeeController extends Controller
                 return Str::limit(optional($employee->user)->email, 50);
             })
             ->editColumn('phone', function ($employee) {
-                return Str::limit(optional($employee->user)->phone, 50);
+                return Str::limit(optional($employee->user)->country_code.optional($employee->user)->phone, 50);
             })
             ->editColumn('status', function ($employee) {
                 return ($employee->status == 5 ? trans('statuses.' . Status::ACTIVE) : trans('statuses.' . Status::INACTIVE));
@@ -265,7 +262,7 @@ class EmployeeController extends Controller
                 return Str::limit(optional($pre_register->visitor)->email, 50);
             })
             ->editColumn('phone', function ($pre_register) {
-                return Str::limit(optional($pre_register->visitor)->phone, 50);
+                return Str::limit(optional($pre_register->user)->country_code.optional($pre_register->visitor)->phone, 50);
             })
 
             ->editColumn('expected_date', function ($pre_register) {
@@ -291,61 +288,4 @@ class EmployeeController extends Controller
             ->escapeColumns([])
             ->make(true);
     }
-
-    public function exportEmployees()
-    {
-        $data = $this->employeeService->all();
-
-        Excel::store(new EmployeesTemplateExport($data), 'employees.xlsx');
-    }
-
-    public function importEmployees(Request $request)
-    {
-
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv'
-        ]);
-
-        try {
-            Excel::import(new EmployeesImport(), $request->file('file'));
-
-            return redirect()->back()->with('success', 'Employees imported successfully.');
-        } catch (ValidationException $e) {
-            // Handle validation exception
-            $errorMessage = implode(' & ', $e->validator->errors()->all());
-            return redirect()->back()->with('error', $errorMessage);
-        } catch (QueryException $e) {
-            // Handle specific database exception (Integrity constraint violation)
-            if (strpos($e->getMessage(), 'Duplicate entry') !== false) {
-                $errorMessage = 'Duplicate entry found. Please check your file for duplicate records.';
-
-            } else {
-                // Handle other database exceptions if needed
-                $errorMessage = 'Database error during import.';
-
-            }
-
-            return redirect()->back()->with('error', $errorMessage);
-        } catch (\Exception $e) {
-            // Handle other generic exceptions
-            $errorMessage = $this->getErrorMessage($e);
-
-            return redirect()->back()->with('error', $errorMessage);
-        }
-    }
-
-
-    private function getErrorMessage(\Exception $e): string
-    {
-        if ($e instanceof \Illuminate\Validation\ValidationException) {
-            // If the exception is a validation exception, get the error messages
-            return implode(' & ', $e->validator->errors()->all());
-
-        }
-
-        // If it's not a validation exception, return a generic error message
-        return 'Failed to import employees. Please check your file.';
-    }
-
-
 }

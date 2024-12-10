@@ -1,6 +1,4 @@
-
-
-$(function() {
+$(function () {
     const cameraOptions = document.querySelector('.video-options>select');
     const video = document.querySelector('video');
     const canvas = document.querySelector('canvas');
@@ -25,14 +23,15 @@ $(function() {
     cameraOptions.onchange = () => {
         const updatedConstraints = {
             ...constraints,
-            deviceId: {
-                exact: cameraOptions.value
+            video: {
+                deviceId: {
+                    exact: cameraOptions.value
+                }
             }
         };
 
         startStream(updatedConstraints);
     };
-
 
     const doScreenshot = () => {
         canvas.width = video.videoWidth;
@@ -41,9 +40,9 @@ $(function() {
         screenshotImage.src = canvas.toDataURL('image/png');
         screenshotImage.classList.remove('d-none');
         document.getElementById('image').value = canvas.toDataURL('image/png');
-        document.getElementById('card-img').src = canvas.toDataURL('image/png');
+        // document.getElementById('card-img').src = canvas.toDataURL('image/png');
     };
-    document.getElementById("screenshot").addEventListener("click", function() {
+    document.getElementById("screenshot").addEventListener("click", function () {
         doScreenshot();
     });
 
@@ -58,9 +57,6 @@ $(function() {
         screenshot.classList.remove('d-none');
 
     };
-
-
-
 
     const getCameraSelection = async () => {
         const devices = await navigator.mediaDevices.enumerateDevices();
@@ -77,8 +73,10 @@ $(function() {
         if ('mediaDevices' in navigator && navigator.mediaDevices.getUserMedia) {
             const updatedConstraints = {
                 ...constraints,
-                deviceId: {
-                    exact: cameraOptions.value
+                video: {
+                    deviceId: {
+                        exact: cameraOptions.value[0]
+                    }
                 }
             };
             startStream(updatedConstraints);

@@ -1,179 +1,110 @@
 @extends('frontend.layouts.frontend')
-@section('style')
-<style>
-    #myOnlineCamera video {
-        width: 320px;
-        height: 240px;
-        margin: 15px;
-        float: left;
-    }
 
-    #myOnlineCamera canvas {
-        width: 320px;
-        height: 240px;
-        margin: 15px;
-        float: left;
-    }
-
-    #myOnlineCamera button {
-        clear: both;
-        margin: 30px;
-    }
-</style>
-@endsection
 @section('content')
-<!-- Default Page -->
-<section id="pm-banner-1" class="custom-css-step">
-    <div class="container camera-container">
-        <div class="card border-0 bg-body" style="margin-top:20px;">
-            <div class="card-header border-0 bg-body" id="Details" align="center">
-                @if(!setting('photo_capture_enable'))
-                <h4 style="color: #111570;font-weight: bold">{{__('Visitor Card Information')}}</h4>
-                @endif
-            </div>
-            <form action="{{ route('check-in.step-two.next') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-            <div class="card-body custom-camera">
-                <div class="row">
-                    @if(setting('photo_capture_enable')  && strpos($image, "default/user.png") !== false )
-                    <div class="col-md-6 left-div">
-                        <div class="card border-0 ">
-                            <h4 style="color: #111570;font-weight: bold" class="text-center">{{__('Take Visitor Photo')}}</h4>
-
-                            <div class="card-body">
-                                <div class="video-options mb-4">
-                                    <select name="" id="" class="custom-select">
-                                        <option value="">Select camera</option>
-                                    </select>
-                                </div>
-                                <div class="row">
-                                    <div class="col-9">
-                                        <video width="100%" height="200px" id="videos" autoplay></video>
-                                        <canvas class="d-none" style="border:5px solid #d3d3d3; display: none"></canvas>
-                                        <input type="hidden" id="image" name="photo" value="">
-                                    </div>
-                                    <div class="col-3">
-                                        <button type="button" id="screenshot" title="ScreenShot" class='retakephoto'>
-                                            <img class="img" src="{{ asset('images/capture.png')}}" style="height: 80px">
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                        <span class="text-center">{!! $errors->first('photo', '<p class="text-danger">:message</p>') !!}</span>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="img-cards" id="printidcard">
-                            <div class="id-card-holder">
-                                <div class="id-card custom-id-card">
-                                    <div class="id-card-photo">
-                                        <img id="card-img" style="width: 120px;height: 120px;" class="screenshot-image" alt="">
-                                    </div>
-                                    <h2 class="name mt-4">{{$visitingDetails['first_name']}} {{$visitingDetails['last_name']}}</h2>
-                                    <h2 class="info"> {{__('Phone : ')}}{{$visitingDetails['phone']}}</h2>
-                                    @isset($visitingDetails['email'])
-                                    <h2 class="info">{{__('Email : ')}}{{$visitingDetails['email']}}</h2>
-                                    @endisset
-
-                                    <h2 class="visit mt-4">{{__('VISITED TO')}}</h2>
-                                    @if($employee)
-                                    <h3 class="email">{{__('Host:')}} {{$employee->name}}</h3>
-                                    @endif
-                                    <hr class="bar">
-                                    <p class="company">{{ setting('site_name') }} </p>
-                                    <p class="company">{{ setting('site_address') }} </p>
-                                    <p class="email">{{__('E-mail :')}}{{ setting('site_email') }} </p>
-                                </div>
+<section class="h-screen">
+    <form action="{{ route('check-in.step-two.next') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        <div class="container lg:px-24 mx-auto pb-8">
+            <div class="row pt-8">
+                <div class="lg:col-6 md:col-6 col-12">
+                    <div class="p-6 flex w-full max-w-[472px] mx-auto flex-col items-center bg-userBg rounded-2xl backdrop-blur-lg shadow-card">
+                        <h2 class="font-extrabold text-2xl md:text-[32px] text-primary leading-none">{{ __('frontend.take_visitor_photo') }}</h2>
+                        <div class="w-full mt-6 mb-3 relative video-options">
+                            <select class="appearance-none block w-full text-primary border !border-[#97A3C0] rounded-[12px] py-3 px-4 text-lg font-normal leading-tight focus:outline-none focus:bg-white active:border-gray-400" id="grid-state">
+                                <option value="">Select camera</option>
+                            </select>
+                            <div class="pointer-events-none absolute top-1/3 top right-3 flex items-center px-2 text-primary">
+                                <i class="fa-solid fa-chevron-down"></i>
                             </div>
                         </div>
-                    </div>
-                    @else
-                    <div class="col-md-12">
-                        <div class="img-cards" id="printidcard">
-                            <div class="id-card-holder">
-                                <div class="id-card">
-                                    <div class="id-card-photo">
-                                        <img id="card-img" style="width: 80px;height: 70px;margin: 3px;" src="{{ @$image ? $image : asset('images/'.setting('site_logo')) }}" class="screenshot-image" alt="">
-                                    </div>
-                                    <h2>{{$visitingDetails['first_name']}} {{$visitingDetails['last_name']}}</h2>
-                                    <h2>{{$visitingDetails['phone']}}</h2>
-                                    @if(isset($visitingDetails['email']))
-                                    <h2>{{$visitingDetails['email']}}</h2>
-                                    @endif
-                                    <h2>{{$visitingDetails['address']}}</h2>
-                                    <h2>{{$visitingDetails['company_name']}}</h2>
-                                    <h2>{{__('VISITED TO')}}</h2>
-                                    @if($employee)
-                                    <h3>{{__('Host:')}} {{$employee->name}}</h3>
-                                    @endif
-                                    <hr>
-                                    <p><strong>{{ setting('site_name') }} </strong></p>
-                                    <p><strong>{{ setting('site_address') }} </strong></p>
-                                    <p>{{__('Ph:')}}{{ setting('site_phone') }} | E-mail: {{ setting('site_email') }} </p>
-                                </div>
-                            </div>
+                        <div class="mt-1 rounded-xl max-w-[424px] max-h-[282px] mb-8">
+                            <video class="rounded-xl h-[300px]" id="videos" autoplay></video>
+                            <canvas class="d-none"
+                                style="border:5px solid #d3d3d3; display: none"></canvas>
+                            <input type="hidden" id="image" name="photo" value="">
                         </div>
-                    </div>
-                    @endif
-                </div>
-            </div>
-            <div class="card-footer custom-footer">
-                <div class="row">
-                    <div class="col-md-6">
-                        <a href="{{ route('check-in.step-one') }}" class="btn btn-primary float-left text-white cancel px-5 py-2">
-                           {{__('Back')}}
-                        </a>
-                    </div>
-                    <div class="col-md-6">
-                        <button type="submit" class="btn  float-right continue text-light px-5 py-2 btn-submit-two" id="hide">
-                        {{__('Continue')}}
+                        <button type="button" id="screenshot" title="ScreenShot" class="h-12 flex items-center gap-3 bg-primary text-white mt-6 ps-6 leading-snug pr-[6px] py-[6px] rounded-3xl font-bold text-lg retakephoto">{{ __('frontend.capture_photo') }}
+                            <div class="p-[6px] rounded-full bg-[rgba(255,255,255,0.3)] w-10 h-10"><img src="{{ asset('frontend/images/photo_details/Camera.png') }}" alt="camera" class="w-full"></div>
                         </button>
                     </div>
+                    <span class="text-center">{!! $errors->first('photo', '<p class="text-danger">:message</p>') !!}</span>
+                </div>
+
+                <div class="lg:col-6 md:col-6 col-12 ">
+                    <div class="flex justify-center  md:justify-end h-full">
+                        <div class="p-6 h-full flex w-full md:max-w-[372px] max-w-[472px] flex-col  bg-userBg rounded-2xl backdrop-blur-[15px] shadow-card -z-10">
+                            <div>
+                                <h3 class="text-2xl font-extrabold text-primary block text-left">{{ __('frontend.your_information') }}</h3>
+                            </div>
+                            <div class="text-base md:text-[20px] flex flex-col gap-3 md:gap-4 mt-6">
+                                <div class="id-card-photo flex justify-center">
+                                    <img id="card-img" style="width: 120px;height: 120px;"
+                                        class="screenshot-image" alt="">
+                                </div>
+                                <div class="flex gap-2">
+                                    <p class="font-semibold">{{ __('frontend.name') }}:</p>
+                                    <p class="font-normal">{{ $visitingDetails['first_name'] }} {{ $visitingDetails['last_name'] }}</p>
+                                </div>
+                                @isset($visitingDetails['phone'])
+                                <div class="flex gap-2">
+                                    <p class="font-semibold">{{ __('frontend.phone') }}:</p>
+                                    <p class="font-normal">{{ $visitingDetails['phone'] }}</p>
+                                </div>
+                                @endisset
+                                @isset($visitingDetails['email'])
+                                <div class="flex gap-2">
+                                    <p class="font-semibold">{{ __('frontend.email') }}:</p>
+                                    <p class="font-normal">{{ $visitingDetails['email'] }}</p>
+                                </div>
+                                @endisset
+                                @isset($visitingDetails['national_identification_no'])
+                                <div class="flex gap-2">
+                                    <p class="font-semibold">{{ __('frontend.nid_no') }}:</p>
+                                    <p class="font-normal">{{ $visitingDetails['national_identification_no'] }}</p>
+                                </div>
+                                @endisset
+                                @if ($employee)
+                                <div class="flex gap-2">
+                                    <p class="font-semibold">{{ __('frontend.host') }}:</p>
+                                    <p class="font-normal">{{ $employee->name }}</p>
+                                </div>
+                                @endif
+                                @isset($visitingDetails['purpose'])
+                                <div class="flex gap-2">
+                                    <p class="font-semibold">{{ __('frontend.purpose') }}:</p>
+                                    <p class="font-normal">{{ $visitingDetails['purpose'] }}</p>
+                                </div>
+                                @endisset
+                                @isset($visitingDetails['address'])
+                                <div class="flex gap-2">
+                                    <p class="font-semibold">{{ __('frontend.address') }}:</p>
+                                    <p class="font-normal">{{ $visitingDetails['address'] }}</p>
+                                </div>
+                                @endisset
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            </form>
-        </div>
-        <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">{{__('Terms & condition')}}</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        {{strip_tags(setting('terms_condition'))}}
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
+            <div class="flex justify-between mt-6 sm:mt-8">
+                <a href="{{ route('check-in.step-one') }}"><button type="reset" class="bg-danger text-white px-6 py-3 rounded-3xl shadow-btnDanger text-lg font-bold leading-snug">{{ __('frontend.cancel') }}</button></a>
+                <button id="hide" type="submit" class="bg-primary text-lg font-bold text-white px-6 py-3 rounded-3xl shadow-btnNext leading-snug">{{ __('frontend.continue') }}</button>
             </div>
         </div>
-    </div>
-    <hr class="hr-line">
-    <div class="d-flex justify-content-center footer-text pb-3">
-        <span> {{setting('site_footer')}}</span>
-    </div>
+    </form>
 </section>
+
 @endsection
 @section('scripts')
 <script src="{{ asset('js/photo.js') }}"></script>
-
 <script>
-        $(document).ready(function() {
-
-            $(".btn-submit-two").attr("disabled", false);
-
-            $(".btn-submit-two").click(function(){
-                $(".btn-submit-two").attr("disabled", true);
-                $('form').submit();
-            });
-
+    $(document).ready(function() {
+        $(".btn-submit-two").attr("disabled", false);
+        $(".btn-submit-two").click(function() {
+            $(".btn-submit-two").attr("disabled", true);
+            $('form').submit();
         });
-    </script>
 
+    });
+</script>
 @endsection

@@ -2,132 +2,36 @@
 
 @section('content')
 <!-- Default Page -->
-<section id="pm-banner-1" class="custom-css-step">
-    <div class="container custom-prereg">
-        <div class="card" style="margin-top:40px;">
-            <div class="card-body">
-                <div style="margin: auto;">
-                    {!! Form::open(['route' => 'checkout.index', 'id' => 'myForm']) !!}
-                    <div class="save">
-                        <div class="row">
-                            <div class="col-md-4 col-sm-12 left-side">
-                                <h4 style="color: #111570;font-weight: bold">{{__('frontend.checkout-visitor')}}
-                                </h4>
-                                <div class="form-group {{ $errors->has('visitorID') ? 'has-error' : ''}}">
-                                    {!! Html::decode(Form::label('visitorID',trans('frontend.visitor_id'). "<span
-                                        class='text-danger'>*</span>",
-                                    ['class' => 'control-label'])) !!}
-                                    {!! Form::text('visitorID', old('visitorID'), ('' == 'required') ? ['class' =>
-                                    'form-control input','id
-                                    '=>'visitorID','required' => 'required',
-                                    'placeholder'=>trans('frontend.search_visitor_id')] : ['class' =>
-                                    'form-control input','id '=>'visitorID',
-                                    'placeholder'=>trans('frontend.search_visitor_id')]) !!}
-                                    <!-- {!! $errors->first('visitorID', '<p class="text-danger">:message</p>') !!} -->
-                                    @if ($errors->any())
-                                    @foreach ($errors->all() as $error)
-                                    <p class="text-danger">{{ $error }}</p>
-                                    @endforeach
 
-                                    @endif
-                                </div>
-                                
-                                <div class="row">
-                                    <div class="col-6">
-                                        <a href="{{ route('/') }}" class="btn cancel float-left text-light ">
-                                            {{__('frontend.cancel')}}
-                                        </a>
-                                    </div>
-                                    <div class="col-6">
-                                        <button type="submit" class="btn continue float-right text-light" id="continue">
-                                            {{__('frontend.continue')}}
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                              <div class="col-md-8">
-                                @if(isset($visitingDetails))
-                                <div class="card" style="border: 0;">
-                                    <div class="card-body">
-                                        <div class="id-card-hook"></div>
-                                        <div class="img-cards" id="printidcard">
-                                            <div class="id-card-holder">
-                                                <div class="id-card">
-                                                    <div class="id-card-photo">
-                                                        @if($visitingDetails->getFirstMediaUrl('visitor'))
-                                                        <img src="{{ asset($visitingDetails->getFirstMediaUrl('visitor')) }}"
-                                                            alt="">
-                                                        @else
-                                                        <img src="{{ asset('images/'.setting('site_logo')) }}" alt="">
-                                                        @endif
-                                                    </div>
-                                                    <h2>{{$visitingDetails->visitor->name}}</h2>
-                                                    <h3>{{__('visitor.ph')}}:{{$visitingDetails->visitor->phone}}</h3>
-                                                    <h3>{{__('visitor.id')}}#{{$visitingDetails->reg_no}}</h3>
-                                                    <h3>{{$visitingDetails->company_name}}</h3>
-                                                    <h3>{{$visitingDetails->visitor->address}}</h3>
-                                                    <h2>{{__('visitor.visited_to')}}</h2>
-                                                    <h3>{{__('visitor.host:')}} {{$visitingDetails->employee->name}}
-                                                    </h3>
-                                                    <hr>
-                                                    <p><strong>{{ setting('site_name') }} </strong></p>
-                                                    <p><strong>{{ setting('site_address') }} </strong></p>
-                                                    <p>{{__('visitor.ph')}}: {{ setting('site_phone') }} |
-                                                        {{__('visitor.email')}}:
-                                                        {{ setting('site_email') }} </p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row justify-content-md-center">
-                                            <div class="col-md-4">
-                                                <div class="justify-content-center mt-10">
-                                                    @if(!$visitingDetails->checkout_at)
-                                                    <a class="checkout" href="{{ route('checkout.update',$visitingDetails) }}">
-                                                        <span>{{__('frontend.check_out')}}</span>
-                                                    </a>
-                                                   
-                                                    @else
-                                                    <div>
-                                                        <p align="center" class="not-data">
-                                                            {{__('frontend.you_have_already_checked_out_successfully')}}
-                                                        </p>
-                                                    </div>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                @else
-                                @if(!$details)
-                                <div>
-                                    <p align="center" class="not-data">{{__('frontend.id_not_available')}}</p>
-                                </div>
-                                @endif
-                                @endif
-
-                            </div>
+<section class="h-screen">
+    <div class="container">
+        <div class="pb-12 pt-12 md:pt-14 lg:pt-20">
+            <div class="row">
+                <div class="lg:col-6 md:col-6 col-12 md:pr-0 md:mt-16 mb-20">
+                    <h1 class="text-2xl md:text-[32px] font-extrabold text-primary mb-6 leading-none">{{__('frontend.checkout-visitor')}}</h1>
+                    <form action="{{ route('checkout.index') }}" method="POST">
+                        @csrf
+                        <label class="block text-black text-sm font-medium mb-2 required" for="email">{{__('frontend.visitor_id')}}</label>
+                        <input class="appearance-none block w-full text-primary border border-[#97A3C0] rounded-[12px] py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white @error('visitorID')is-invalid @enderror" id="email" type="text" name="visitorID">
+                        @error('visitorID')
+                        <div class="invalid-feedback">
+                            {{ $message }}
                         </div>
+                        @enderror
+                        <div class="flex justify-between mt-6 sm:mt-8">
+                            <a href="{{ route('/') }}"><button type="reset" class="bg-danger text-white px-6 py-3 rounded-3xl shadow-btnDanger text-lg font-bold leading-snug">{{__('frontend.cancel')}}</button></a>
+                            <button type="submit" class="bg-primary text-lg font-bold text-white px-6 py-3 rounded-3xl shadow-btnNext leading-snug"> {{__('frontend.continue')}}</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="lg:col-6 md:col-6 col-12  flex justify-center md:justify-end lg:justify-end ">
+                    <div class="imgGroup xl:max-w-[497px] lg:max-w-[409px] md:max-w-[350px] w-full">
+                    <img src="{{ asset('frontend/images/visitor_details/image1.png') }}" alt="image1" class="img1">
+                    <img src="{{ asset('frontend/images/visitor_details/image2.png') }}" alt="image2" class="img2">
                     </div>
-                    {!! Form::close() !!}
                 </div>
             </div>
         </div>
     </div>
-    <hr class="hr-line">
-    <div class="d-flex justify-content-center footer-text pb-3">
-        <span> {{setting('site_footer')}}</span>
-    </div>
 </section>
-@endsection
-@section('scripts')
-<script type="application/javascript">
-    $(document).ready(function () {
-        $("#form-submit").click(function () {
-            $("#myForm").submit(); // Submit the form
-        });
-    });
-
-</script>
 @endsection

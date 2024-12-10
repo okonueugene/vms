@@ -17,7 +17,7 @@
             <label for="purchase_code">
                 {{ trans('installer_messages.purchase-code.form.purchase_code_label') }}
             </label>
-            <input type="text" name="purchase_code" id="purchase_code" value="" placeholder="{{ trans('installer_messages.purchase-code.form.purchase_code_label') }}" />
+            <input type="text" name="purchase_code" id="purchase_code" value="xxxxxxxx" placeholder="{{ trans('installer_messages.purchase-code.form.purchase_code_label') }}" />
             @if ($errors->has('purchase_code'))
                 <span class="error-block">
                     <i class="fa fa-fw fa-exclamation-triangle" aria-hidden="true"></i>
@@ -30,7 +30,7 @@
             <label for="purchase_username">
                 {{ trans('installer_messages.purchase-code.form.purchase_username_label') }}
             </label>
-            <input type="text" name="purchase_username" id="purchase_username" value="" placeholder="{{ trans('installer_messages.purchase-code.form.purchase_username_label') }}" />
+            <input type="text" name="purchase_username" id="purchase_username" value="xxxxxxxx" placeholder="{{ trans('installer_messages.purchase-code.form.purchase_username_label') }}" />
             @if ($errors->has('purchase_username'))
                 <span class="error-block">
                     <i class="fa fa-fw fa-exclamation-triangle" aria-hidden="true"></i>

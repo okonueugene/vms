@@ -14,9 +14,28 @@
 <!-- Template JS File -->
 <script src="{{ asset('assets/js/scripts.js') }}"></script>
 <script src="{{ asset('js/custom.js') }}"></script>
+<script src="https://www.gstatic.com/firebasejs/8.3.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.3.2/firebase-messaging.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.3.2/firebase.js"></script>
 
 <script type="text/javascript">
+    @if(session('success'))
+    iziToast.success({
+        title: 'Success',
+        message: '{{ session('
+        success ') }}',
+        position: 'topRight'
+    });
+    @endif
+
+    @if(session('error'))
+    iziToast.error({
+        title: 'Error',
+        message: '{{ session('
+        error ') }}',
+        position: 'topRight'
+    });
+    @endif
     var beep = document.getElementById("myAudio1");
 
     function sound() {
@@ -31,13 +50,13 @@
 
         // web_token
         var firebaseConfig = {
-            apiKey: "AIzaSyCwsKNDXae_U6PVp28rUsyeUVLZJGd2JsQ",
-            authDomain: "visitor-app-f4cf8.firebaseapp.com",
-            projectId: "visitor-app-f4cf8",
-            storageBucket: "visitor-app-f4cf8.appspot.com",
-            messagingSenderId: "916840265010",
-            appId: "1:916840265010:web:0a79ffc97842d18924932b",
-            measurementId: "G-B6CDGMQ910"
+            apiKey: "{{ setting('apiKey') }}",
+            authDomain: "{{ setting('authDomain') }}",
+            projectId: "{{ setting('projectId') }}",
+            storageBucket: "{{ setting('storageBucket') }}",
+            messagingSenderId: "{{ setting('messagingSenderId') }}",
+            appId: "{{ setting('appId') }}",
+            measurementId: "{{ setting('measurementId') }}"
         };
         firebase.initializeApp(firebaseConfig);
         const messaging = firebase.messaging();
@@ -69,32 +88,11 @@
         }
         messaging.onMessage(function(payload) {
             const title = payload.notification.title;
-            const options = {
-                body: payload.notification.body,
-                icon: payload.notification.icon,
-            };
-
+            const body = payload.notification.body;
             sound();
-            window.location.reload();
-            new Notification(title, options);
+            new Notification(title, {
+                body: body,
+            });
         });
-
-        @if(session('success'))
-        iziToast.success({
-            title: 'Success',
-            message: '{{ session('
-            success ') }}',
-            position: 'topRight'
-        });
-        @endif
-
-        @if(session('error'))
-        iziToast.error({
-            title: 'Error',
-            message: '{{ session('
-            error ') }}',
-            position: 'topRight'
-        });
-        @endif
     });
 </script>

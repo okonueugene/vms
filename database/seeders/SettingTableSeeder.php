@@ -1,7 +1,5 @@
 <?php
-
 namespace Database\Seeders;
-
 use Illuminate\Database\Seeder;
 use Setting as SeederSetting;
 
@@ -18,7 +16,7 @@ class SettingTableSeeder extends Seeder
         $settingArray['site_email']               = 'info@inilabs.xyz';
         $settingArray['site_phone_number']        = '+8801777664206';
         $settingArray['site_logo']                = 'site_logo.png';
-        $settingArray['site_footer']              = '© All Rights Reserved';
+        $settingArray['site_footer']              = '@ All Rights Reserved';
         $settingArray['site_address']             = 'Dhaka, Bangladesh.';
         $settingArray['site_description']         = 'Visitor Pass management system.';
         $settingArray['notify_templates']         = '<p>Hello Employee Someone wants meet you, his/her name is</p>';
@@ -28,6 +26,7 @@ class SettingTableSeeder extends Seeder
         $settingArray['sms_gateway']              = 1;
         $settingArray['front_end_enable_disable'] = 1;
         $settingArray['photo_capture_enable']     = 1;
+        $settingArray['terms_visibility_status']  = 1;
         $settingArray['terms_condition']          = 'Terms condition';
         $settingArray['welcome_screen']           = '<p>Welcome,please tap on button to check-in</p>';
 

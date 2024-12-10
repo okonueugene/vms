@@ -1,107 +1,73 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-    <title>{{ setting('site_name'). ' - ' . __('Login') }}</title>
-    <!-- General CSS Files -->
-    <link rel="stylesheet" href="{{ asset('assets/modules/bootstrap/dist/css/bootstrap.min.css') }}">
-    <!-- CSS Libraries -->
+@extends('frontend.layouts.frontend')
 
-    <!-- Template CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/components.css') }}">
-</head>
+@section('title', 'Log in')
 
-<body>
-    <div id="app">
-        <section class="section">
-            <div class="container mt-5">
-                <div class="row">
-                    <div class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
-                        <div class="login-brand">
-                            @if(setting('site_logo'))
-                                <img src="{{ asset('images/'.setting('site_logo')) }}" alt="logo" width="100">
-                            @else
-                                <b>{{ setting('site_name') }}</b>
-                            @endif
-                        </div>
-
-                        <div class="card card-primary">
-                            <div class="card-header">
-                                <h4>{{ __('Login') }}</h4>
+@section('content')
+<section class="h-screen ">
+    <div class="container py-16">
+        <div class="max-w-[770px] w-full mx-auto rounded-2xl  bg-cardBg shadow-card -z-50">
+            <div class="row">
+                <div class="col-12 md:col-6 !py-0">
+                    <div class="py-6 px-4 md:px-6 md:pr-0">
+                        <form method="POST" action="{{ route('login') }}">
+                            @csrf
+                            <h1 class="text-2xl sm:text-[32px] font-extrabold text-primary mb-8 md:mb-12 leading-none">{{ __('login.login') }}</h1>
+                            <div class="mb-6">
+                                <label class="block tracking-wide text-black text-sm font-medium mb-2 required" for="email">{{ __('login.email') }}</label>
+                                <input class=" appearance-none  w-full text-primary border border-[#97A3C0] rounded-[12px] py-3 px-4 mb-1 leading-tight @error('email') is-invalid @enderror" id="email" type="text" name="email" value="{{ old('email') }}">
+                                @error('email')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
                             </div>
-
-                            <div class="card-body">
-                                <form method="POST" action="{{ route('login') }}">
-                                    @csrf
-                                    <div class="form-group">
-                                        <label for="email">{{ __('Email') }}</label><span class="text-danger"> *</span>
-                                        <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" />
-                                        @error('email')
-                                            <div class="invalid-feedback">
-                                                {{ $message }}
-                                            </div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="form-group">
-                                        <div class="d-block">
-                                            <label for="password" class="control-label">{{ __('Password') }}</label><span class="text-danger"> *</span>
-                                        </div>
-                                        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password"/>
-                                        @error('password')
-                                            <div class="invalid-feedback">
-                                                {{ $message }}
-                                            </div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="form-group">
-                                        <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-
-                                            <label class="custom-control-label" for="remember">
-                                                {{ __('Remember Me') }}
-                                            </label>
+                            <div class="mb-6">
+                                <label class="block tracking-wide text-black text-sm font-medium mb-2 required" for="password">{{ __('login.password') }}</label>
+                                <input class=" appearance-none block w-full text-primary border border-[#97A3C0] rounded-[12px] py-3 px-4 mb-1 leading-tight @error('password') is-invalid @enderror" id="password" type="password" name="password">
+                                @error('password')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
+                            <div class="flex justify-between mb-7">
+                                <div class="inline-flex items-center gap-2">
+                                    <div class="relative flex cursor-pointer items-center rounded-full" for="checkbox-1" data-ripple-dark="true">
+                                        <input type="checkbox" class="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-[4px] border-[1.5px] border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-6 before:w-6 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-primary checked:bg-primary checked:before:bg-primary" id="checkbox-1" name="remember" {{ old('remember') ? 'checked' : '' }} />
+                                        <div class="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
                                         </div>
                                     </div>
-
-                                    <div class="form-group">
-                                        <button type="submit" class="btn btn-primary btn-lg btn-block" tabindex="4">
-                                            {{ __('Login') }}
-                                        </button>
-                                    </div>
-                                </form>
+                                    <label for="checkbox-1" class="font-medium text-sm"> {{ __('login.remember_me') }}</label>
+                                </div>
+                                <span class="font-medium text-sm text-primary"><a href="{{route('password.request')}}" class="custom-control-labe">{{ __('login.reset_password') }}?</a></span>
                             </div>
-                        </div>
-
+                            <button type="submit" class="text-lg font-bold leading-snug text-white bg-primary rounded-[23.5px] px-6 py-3 w-full shadow-btnNext">{{ __('login.login') }}</button>
+                        </form>
                         @if(env('DEMO'))
-                            <div class="card mx-auto text-center mt-4" style="max-width: 500px;">
-                                <div class="card-header">
-                                    <h4 class="mb-0">{{ __('For Quick Demo Login Click Below...') }}</h4>
-                                </div>
-                                <div class="card-body">
-                                    <div class="buttons">
-                                        <button id="demo-admin" class="btn btn-primary">{{ __('Admin') }}</button>
-                                        <button id="demo-reception" class="btn btn-info">{{ __('Reception') }}</button>
-                                        <button id="demo-employee" class="btn btn-success">{{ __('Employee') }}</button>
-                                    </div>
-                                </div>
-                            </div>
+                        <p class="text-base font-bold mt-12 mb-4">{{ __('login.for_quick_demo_login_click_below') }}</p>
+                        <div class="flex flex-shrink gap-x-2 sm:gap-x-4 justify-between sm:justify-start">
+                            <button id="demo-admin" class="bg-[#4F97EC] text-white rounded-3xl px-4 py-3 shadow-btnAdmin text-sm md:text-base font-bold">{{ __('login.admin') }}</button>
+                            <button id="demo-reception" class="bg-[#944FEC] text-white rounded-3xl px-4 py-3 shadow-btnReception text-sm md:text-base font-bold">{{ __('login.reception') }}</button>
+                            <button id="demo-employee" class="bg-[#EC874F] text-white rounded-3xl px-4 py-3 shadow-btnEmployee text-sm md:text-base font-bold">{{ __('login.reception') }}</button>
+                        </div>
                         @endif
 
-                        <div class="simple-footer">
-                            {{ setting('site_footer') }}
-                        </div>
+                    </div>
+                </div>
+                <div class="hidden md:block md:col-6 !py-0 ">
+                    <div class="max-w-[373px] max-h-[561px] w-full h-full">
+                        <img src="{{ asset('frontend/images/login/login.png') }}" alt="" class="w-full h-full">
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
     </div>
+</section>
+@endsection
 
-
-    <script src="{{ asset('frontend/frontend/js/jquery.js') }}"></script>
-    <script src="{{ asset('frontend/js/demo-login.js') }}"></script>
-</body>
-</html>
+@section('scripts')
+<script src="{{ asset('frontend/js/demo-login.js') }}"></script>
+@endsection

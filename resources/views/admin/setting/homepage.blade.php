@@ -15,7 +15,7 @@
                          <div class="row">
                              <div class="col-md-6">
                                  <div class="form-group" id="">
-                                     <label class="control-label" for="defaultUnchecked">{{__('frontend_setting.front_end_enable_disable')}}</label>
+                                     <label class="control-label" for="defaultUnchecked">{{__('frontend_setting.front_end_enable_disable_label')}}</label>
                                      <div class="form-check">
                                          <label class="form-check-label">
                                              <input type="radio" class="form-check-input" name="front_end_enable_disable" {{ setting('front_end_enable_disable') == true ? "checked":"" }} value="1">{{__('frontend_setting.enable')}}
@@ -36,7 +36,7 @@
                          <div class="row">
                              <div class="col-md-6">
                                  <div class="form-group" id="">
-                                     <label class="control-label" for="defaultUnchecked">{{__('frontend_setting.photo_capture_enable_disable')}}</label>
+                                     <label class="control-label" for="defaultUnchecked">{{__('frontend_setting.photo_capture_enable_disable_label')}}</label>
                                      <div class="form-check">
                                          <label class="form-check-label">
                                              <input type="radio" class="form-check-input" name="photo_capture_enable" {{ setting('photo_capture_enable') == true ? "checked":"" }} value="1">{{__('frontend_setting.enable')}}
@@ -45,6 +45,28 @@
                                      <div class="form-check">
                                          <label class="form-check-label">
                                              <input type="radio" class="form-check-input" name="photo_capture_enable" {{ setting('photo_capture_enable') == false ? "checked":"" }} value="0">{{__('frontend_setting.disable')}}
+                                         </label>
+                                     </div>
+                                 </div>
+                             </div>
+
+                         </div>
+                    </fieldset>
+
+                    <fieldset class="setting-fieldset">
+                        <legend class="setting-legend">{{ __('frontend_setting.terms_enable_disable') }}</legend>
+                         <div class="row">
+                             <div class="col-md-6">
+                                 <div class="form-group" id="">
+                                    <label class="control-label" for="defaultUnchecked">{{__('frontend_setting.terms_enable_disable_label')}}</label>
+                                     <div class="form-check">
+                                         <label class="form-check-label">
+                                             <input type="radio" class="form-check-input" name="terms_visibility_status" {{ setting('terms_visibility_status') == true ? "checked":"" }} value="1">{{__('frontend_setting.enable')}}
+                                         </label>
+                                     </div>
+                                     <div class="form-check">
+                                         <label class="form-check-label">
+                                             <input type="radio" class="form-check-input" name="terms_visibility_status" {{ setting('terms_visibility_status') == false ? "checked":"" }} value="0">{{__('frontend_setting.disable')}}
                                          </label>
                                      </div>
                                  </div>

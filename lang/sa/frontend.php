@@ -1,6 +1,6 @@
 <?php
 
-return array (
+return array(
   'been_here_before' => 'كان هنا قبل',
   'cancel' => 'يلغي',
   'check_in' => 'تحقق في',
@@ -23,4 +23,21 @@ return array (
   'visitor_email_phone' => 'البريد الإلكتروني للزائر أو الهاتف أو NID',
   'visitor_id' => 'معرف الزائر',
   'you_have_already_checked_out_successfully' => 'لقد قمت بالفعل بتسجيل الخروج بنجاح',
+
+  'visitor_details'    => 'تفاصيل الزائر',
+  'take_visitor_photo' => 'التقاط صورة للزائر',
+  'your_information'   => 'معلوماتك',
+  'capture_photo'      => 'التقاط صورة',
+  'name'               => 'الاسم',
+  'phone'              => 'الهاتف',
+  'email'              => 'البريد الإلكتروني',
+  'nid_no'             => 'رقم الهوية الوطنية',
+  'host'               => 'المضيف',
+  'purpose'            => 'الهدف',
+  'address'            => 'العنوان',
+  'visitor_id_card'    => 'بطاقة تعريف الزائر',
+  'back'               => 'الرجوع',
+  'print_id'           => 'طباعة البطاقة',
+  'home'               => 'الصفحة الرئيسية'
+
 );

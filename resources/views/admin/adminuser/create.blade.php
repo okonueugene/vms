@@ -1,5 +1,9 @@
 @extends('admin.layouts.master')
 
+@section('css')
+    <link rel="stylesheet" href="{{ asset('assets/lib/inttelinput/css/intlTelInput.css') }}">
+@endsection
+
 @section('main-content')
 
 	<section class="section">
@@ -48,8 +52,10 @@
 				                    </div>
 							        <div class="form-group col">
 				                        <label>{{ __('levels.phone') }}</label> <span class="text-danger">*</span>
-				                        <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}">
-				                        @error('phone')
+				                        <input type="text" name="phone" id="number" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}">
+										<input type="hidden" id="code" name="country_code" value="">
+                                        <input type="hidden" id="code_name" name="country_code_name" value="">
+										@error('phone')
 					                        <div class="invalid-feedback">
 					                          	{{ $message }}
 					                        </div>
@@ -146,4 +152,9 @@
 
 @section('scripts')
 	<script src="{{ asset('js/adminuser/create.js') }}"></script>
+	<script defer src="{{ asset('assets/lib/inttelinput/js/intlTelInput-jquery.js') }}"></script>
+    <script defer src="{{ asset('assets/lib/inttelinput/js/intlTelInput.js') }}"></script>
+    <script defer src="{{ asset('assets/lib/inttelinput/js/utils.js') }}"></script>
+    <script defer src="{{ asset('assets/lib/inttelinput/js/data.js') }}"></script>
+    <script defer src="{{ asset('assets/lib/inttelinput/js/init.js') }}"></script>
 @endsection

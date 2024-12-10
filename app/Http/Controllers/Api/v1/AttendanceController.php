@@ -19,7 +19,7 @@ class AttendanceController extends Controller
 
     public function __construct()
     {
-        $this->data['siteTitle'] = 'Attendance';
+        $this->data['sitetitle'] = 'Attendance';
         $this->middleware('auth:api');
         $this->middleware(['permission:attendance'])->only('index');
         $this->middleware(['permission:attendance_delete'])->only('destroy');

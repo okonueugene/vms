@@ -125,7 +125,7 @@
                                                 <td>{{$visitor->reg_no }}</td>
                                                 <td>{{ Str::limit(optional($visitor->visitor)->name, 50)}}</td>
                                                 <td>{{ Str::limit(optional($visitor->visitor)->email, 50) }}</td>
-                                                <td>{{optional($visitor->visitor)->phone}}</td>
+                                                <td>{{optional($visitor->visitor)->country_code}}{{optional($visitor->visitor)->phone}}</td>
                                                 <td>{{optional($visitor->employee)->user->name}}</td>
                                                 <td>{{ date('d-m-Y h:i A', strtotime($visitor->checkin_at)) }}</td>
                                                 @if($visitor->checkout_at)

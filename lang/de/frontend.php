@@ -1,6 +1,6 @@
 <?php
 
-return array (
+return array(
   'been_here_before' => 'Hier war ich schonmal',
   'cancel' => 'Absagen',
   'check_in' => 'Check-In',
@@ -23,4 +23,21 @@ return array (
   'visitor_email_phone' => 'E-Mail oder Telefon oder NID des Besuchers',
   'visitor_id' => 'Besucher-ID',
   'you_have_already_checked_out_successfully' => 'Sie haben bereits erfolgreich ausgecheckt',
+
+  'visitor_details'    => 'Besucherdetails',
+  'take_visitor_photo' => 'Besucherfoto machen',
+  'your_information'   => 'Ihre Informationen',
+  'capture_photo'      => 'Foto aufnehmen',
+  'name'               => 'Name',
+  'phone'              => 'Telefon',
+  'email'              => 'E-Mail',
+  'nid_no'             => 'NID-Nr.',
+  'host'               => 'Gastgeber',
+  'purpose'            => 'Zweck',
+  'address'            => 'Adresse',
+  'visitor_id_card'    => 'Besucher-Ausweis',
+  'back'               => 'Zurück',
+  'print_id'           => 'Ausweis drucken',
+  'home'               => 'Startseite'
+
 );

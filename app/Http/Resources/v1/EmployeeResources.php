@@ -14,6 +14,8 @@ class EmployeeResources extends JsonResource
             "id"                             => $this->id,
             "name"                           => $this->first_name.' '.$this->last_name,
             "phone"                          => $this->phone,
+            "country_code"                   => $this->country_code,
+            "country_code_name"              => $this->country_code_name,
             "gender"                         => trans('genders.'.$this->gender),
             "official_identification_number" => $this->official_identification_number,
             "date_of_joining"                => Carbon::parse($this->date_of_joining)->format('d M Y'),

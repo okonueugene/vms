@@ -17,6 +17,8 @@ class PreRegisterVisitorResources extends JsonResource
             "last_name"                  => $this->last_name,
             "email"                      => $this->email,
             "phone"                      => $this->phone,
+            "country_code"               => $this->country_code,
+            "country_code_name"          => $this->country_code_name,
             "gender"                     => trans('genders.' . $this->gender),
             "gender_id"                     => $this->gender,
             "national_identification_no" => $this->national_identification_no,
